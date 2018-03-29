@@ -24,7 +24,6 @@ task :deploy do
   sh "git status --short"
   sh "git add ."
   sh "git ci -m 'gh-pages update'"
-  sh "git push origin :gh-pages"
-  sh "git push origin gh-pages"
+  sh "git push -f origin gh-pages"
   sh "git checkout master"
 end
