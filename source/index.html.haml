@@ -1,26 +1,345 @@
 %section#intro
-  = image_tag "logo.png"
+  %h1 Qush
+  %p A UNIX Shell Suitable For Large Programs
+  .tagline
+    %p Jeanine Adkisson
+    %p Programming Research Group, Tokyo Institute of Technology
+    %p
+      %code
+        advisor: Hidehiko Masuhara
+    %p
+      %code
+        mailto:
+        %a(href="mailto:jneen@prg.is.titech.ac.jp") jneen@prg.is.titech.ac.jp
 
-  %h3 Headline
 
-  %p
-    = image_tag "image.gif"
-    %br
-    = File.mtime(__FILE__).strftime("%d.%m.%Y")
+%section<
+  %h2 Shells Are Bad.
+  %h2 But Everyone Uses Them.
+  .vs>
+    = code 'shell' do
+      :plain
+        #!/bin/bash
+
+        getc() {
+          IFS= read -r -n1 -d '' "$@"
+        }
+  .vs>
+    = code 'shell' do
+      :plain
+        #!/bin/bash
+
+        greeting='hello world'
+        count-argv $greeting # => 2
+        count-argv 'hello world' # => 1
+
 
 %section
-  %section
-    %blockquote
-      Quotes
+  %h2 Why?
+  .vs>
+    .box
+      %h3 Ubiquity:
+      .block
+        Available on any UNIX platform!
+  .vs>
+    .box
+      %h3 OS Fluency:
+      .block
+        &ldquo;Feels&rdquo; close to the OS
 
-  %section
-    its html, so try embedding iframes, google trends, youtube videos etc.
+%section
+  %h2
+    What Makes a Shell Feel <span class="dune">&ldquo;Fluent&rdquo;</span>?
+  .bigger
+    %strong.sandy Core language concepts directly map to OS APIs
+  .block
+    .vs3>
+      .box environments
+    .vs3>
+      .box argv
+    .vs3>
+      .box processes
+    .vs3>
+      .box pipes, files, stdio
+    .vs3>
+      .box commands
+    .vs3>
+      .box return codes
 
-  %section
-    %h2 Code
-    %code.ruby
-    %pre.prettyprint.lang-ruby
-      %code.lang-ruby
-        :preserve
-          if a?.has(":something")?
-            console.log "..."
+  concepts every <span class="dune">&ldquo;general-purpose&rdquo;</span> programming language understands.
+
+
+%section
+  %h2 Main Idea
+  %h3 A language that expands UNIX concepts to language abstractions
+
+  .block
+    .vs3>
+      .box environments:<br>prototype objects!
+    .vs3>
+      .box argv:<br>vectors (nestable!)
+    .vs3>
+      .box processes:<br>threads!
+    .vs3>
+      .box pipes, files, stdio:<br>channels!
+    .vs3>
+      .box commands:<br>functions (w/closure!)
+    .vs3>
+      .box return codes:<br>error handling!
+
+%section
+  %h2 Design Philosophy
+
+  %ul
+    %li
+      Derive all language concepts from UNIX APIs<br>
+      (as opposed to embedding another language's semantics,<br>
+      like <code>xonsh</code> or <code>scheme-shell</code>)
+    %li Minimal marshalling, no quotes for <code>exec</code>
+    %li
+      Provide real value-based semantics and abstraction tools<br>
+      (as opposed to everything-is-a-string, like <code>es</code> or <code>fish</code>)
+
+
+%section
+  %h2 Language Design
+
+
+%section
+  %h2 Language Design: Values
+  %h3 Not everything is a string!
+
+  %ul
+    %li
+      Variables can hold <strong>values</strong>: string, number,
+      vector, environment, channel, process
+    %li
+      Channels can handle values, not just bytes
+    %li
+      Functions take values as arguments
+
+
+%section
+  %h2 Language Design: Call Semantics
+  %h3 Multiple return values using stdout.
+
+  .block
+    .vs
+      = code 'qsh' do
+        :plain
+          (both x y) = (
+            put $x; put $y
+          )
+    .vs
+      = code 'console?lang=qsh' do
+        :plain
+          ; put 0 (both 1 2) 3 4
+
+          0 1 2 3 4
+
+  Equivalent to shell <code>$(command arg arg)</code>
+
+
+%section
+  %h2 Language Design: Variable Scope
+
+  .block
+    .vs
+      %h3 Dynamic with <code>$</code>
+      = code 'console?lang=qsh' do
+        :plain
+          ; x = 1
+          ; (f) = (put $x)
+          ; (g) = (x = 2; f)
+          ; g
+          2
+
+    .vs
+      %h3 Lexical with <code>%</code>
+      = code 'console?lang=qsh' do
+        :plain
+          ; x = 1
+          ; (f) = (put %x)
+          ; (g) = (x = 2; f)
+          ; g
+          1
+
+  Dynamic variables = UNIX environment variables
+
+%section
+  %h2 Language Design: Variable Scope
+
+  .block
+    .vs
+      %h3 Dynamic with <code>$</code>
+      = code 'console?lang=qsh' do
+        :plain
+          ; x = 1
+          ; (f) = ($x = 3)
+          ; (g) = (x = 2; f; put $x)
+          ; g; put $x
+          3 1
+
+    .vs
+      %h3 Lexical with <code>%</code>
+      = code 'console?lang=qsh' do
+        :plain
+          ; x = 1
+          ; (f) = (%x = 3)
+          ; (g) = (x = 2; f; put $x)
+          ; g; put $x
+          2 3
+
+  Dynamic variables = UNIX environment variables
+
+%section
+  %h2 Language Design: Compatibility
+
+  .vs
+    %ul
+      %li Idea: pass lambdas to external programs
+      %li <code>/usr/bin/qush-external-<emph>N</emph></code>
+      %li Standard <code>exec</code> interface
+      %li <code>$__QUSH_SERVER</code> and <code>$__QUSH_FUNCTION_<emph>N</emph></code>
+
+  .vs
+    = code 'qsh' do
+      :plain
+
+        # calls into $my-fn in the
+        # current runtime once
+        # every 3 seconds
+
+        ; /usr/bin/watch -d 3 $my-fn
+
+  Bash cannot currently do this.
+
+
+
+
+%section
+  %h2 Language Design: Concurrency
+  Many things TBD, but the principle is:
+  %h3 Behave as closely to UNIX processes as possible.
+  .vs
+    = code 'qsh' do
+      :plain
+        # spawn
+        & command $arg $arg > $out < $in
+
+        # send
+        put message > $in
+
+        # receive
+        get message < $out
+    // vim syntax highlighting gets confused here
+    // >
+  .vs
+    .block
+      %ul
+        %li local environment contains file handles 0~127
+        %li 0 = stdin, 1 = stdout, 2 = stderr, etc
+    = code 'qsh' do
+      :plain
+        command | command
+        command |[5>2] command
+        command |[2>$ERROR_LOG] command
+
+%section
+  %h2 Language Design: Error Handling
+  %h3 Default Behavior
+
+  An &ldquo;error&rdquo; includes:
+
+  .block
+    %ul
+      %li Assertion error (type error or explicit crash)
+      %li External crash signal (SIGINT, etc)
+      %li A child process exits with nonzero code
+      %li A blocked channel closes
+
+
+%section
+  %h2 Language Design: Error Handling
+  %h3 Default Behavior
+  When an error happens:
+  .block
+    %ul
+      %li All child processes are sent SIGINT (or echo signal)
+      %li Compensations are run in reverse order (more later)
+      %li All channels are closed
+      %li Exit with an error code (default 1)
+
+%section
+  %h2 Language Design: Error Handling
+  %h3 Plain Recovery (Continuing)
+
+  .block
+    = code 'qsh' do
+      :plain
+        command || command-if-error
+        command && command-if-no-error
+        command && command-if-no-error !! command-if-error
+
+  .block Internal errors (non-zero exits) in the original command are &ldquo;rescued&rdquo; (ignored)
+
+  .block <code class="scarletred2">TODO:</code> Syntax for targetting error types
+
+
+%section
+  %h2 Language Design: Error Handling
+  %h3 Compensation
+
+  = code 'qsh' do
+    :plain
+      touch /tmp/lock %% rm -f /tmp/lock # compensate an error
+
+      %x = command %% reset # sets $COMP_REF and $COMP_PREV
+
+      checkpoint # clears the current compensation stack
+
+  %br
+  Options being considered for compensation boundaries:
+  .block
+    %ul
+      %li Only at the procedure level
+      %li Controlled by a special environment variable
+
+%section
+  %h2 Implementation Progress
+
+%section
+  %h2 Implementation Progress
+  %h3 RPython + MacroPy
+  .block
+    = code 'python' do
+      :plain
+        @functor
+        class Syntax:
+            class list([elements]): pass
+            class paren([statements]): pass
+            class assign(~lhs, ~rhs): pass
+            class bare(value/unicode): pass
+            class dynvar(name/unicode): pass
+            class pipe(~lhs, ~rhs): pass
+            class call(loc/LocRange, ~func, [args]): pass
+            ...
+
+%section
+  %h2 Implementation Progress
+  %h3 In-Progress
+  .block
+    %ul
+      %li Skeleton Tree-based parser
+      %li Bytecode Design
+  %h3 TODO
+  .block
+    %ul
+      %li Bytecode Compiler
+      %li Bytecode Interpreter
+
+%section
+  %h2 Questions?
+
+%section
+  %h2 Thank You!

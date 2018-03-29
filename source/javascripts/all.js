@@ -1,5 +1,4 @@
 //= require jquery.min
-//= require reveal.min
-//= require syntaxhl/prettify
-//= require editor
+//= require reveal
+//= require reveal-config
 

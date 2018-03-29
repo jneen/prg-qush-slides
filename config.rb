@@ -1,3 +1,34 @@
+load './lib/qsh.rb'
+
+
+
+module HighlightingHelpers
+  def code(lang, attrs={}, &b)
+    content = capture_html(&b)
+    lexer = Rouge::Lexer.find_fancy(lang)
+    formatter = Rouge::Formatters::HTML.new
+    html = formatter.format(lexer.lex(content))
+
+    content_tag :pre, add_classes(attrs, 'highlight', lexer.tag) do
+      html.html_safe
+    end
+  end
+
+  private
+  def add_classes(attrs, *classes)
+    existing = case attrs[:class]
+    when String then
+      attrs[:class].split(/\s+/)
+    when Array then
+      attrs[:class]
+    when nil then
+      []
+    end
+
+    attrs.merge(:class => (existing + classes).join(' '))
+  end
+end
+
 ###
 # Compass
 ###
@@ -10,7 +41,7 @@
 # compass_config do |config|
 #   config.output_style = :compact
 # end
-Haml::Template.options[:ugly] = true
+# Haml::Template.options[:ugly] = true
 
 ###
 # Page options, layouts, aliases and proxies
@@ -51,6 +82,7 @@ Haml::Template.options[:ugly] = true
 set :css_dir, 'stylesheets'
 set :js_dir, 'javascripts'
 set :images_dir, 'images'
+helpers HighlightingHelpers
 
 # Build-specific configuration
 configure :build do
