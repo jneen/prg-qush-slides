@@ -1,0 +1,522 @@
+@import url(reveal.css);
+@import url("//fonts.googleapis.com/css?family=Libre+Baskerville:i,400,700|Lato");
+/* thankful-eyes style from rouge */
+/* line 3, /home/jneen/src/prg-2018-03/source/stylesheets/highlight.css */
+.highlight table td {
+  padding: 5px; }
+
+/* line 4, /home/jneen/src/prg-2018-03/source/stylesheets/highlight.css */
+.highlight table pre {
+  margin: 0; }
+
+/* line 5, /home/jneen/src/prg-2018-03/source/stylesheets/highlight.css */
+.highlight {
+  color: #faf6e4;
+  background-color: #122b3b; }
+
+/* line 9, /home/jneen/src/prg-2018-03/source/stylesheets/highlight.css */
+.highlight .gl {
+  color: #dee5e7;
+  background-color: #4e5d62; }
+
+/* line 13, /home/jneen/src/prg-2018-03/source/stylesheets/highlight.css */
+.highlight .gp {
+  color: #a8e1fe;
+  font-weight: bold; }
+
+/* line 17, /home/jneen/src/prg-2018-03/source/stylesheets/highlight.css */
+.highlight .c, .highlight .cd, .highlight .cm, .highlight .c1, .highlight .cs {
+  color: #6c8b9f;
+  font-style: italic; }
+
+/* line 21, /home/jneen/src/prg-2018-03/source/stylesheets/highlight.css */
+.highlight .cp {
+  color: #b2fd6d;
+  font-weight: bold;
+  font-style: italic; }
+
+/* line 26, /home/jneen/src/prg-2018-03/source/stylesheets/highlight.css */
+.highlight .err {
+  color: #fefeec;
+  background-color: #cc0000; }
+
+/* line 30, /home/jneen/src/prg-2018-03/source/stylesheets/highlight.css */
+.highlight .gr {
+  color: #cc0000;
+  font-weight: bold;
+  font-style: italic; }
+
+/* line 35, /home/jneen/src/prg-2018-03/source/stylesheets/highlight.css */
+.highlight .k, .highlight .kd, .highlight .kv {
+  color: #f6dd62;
+  font-weight: bold; }
+
+/* line 39, /home/jneen/src/prg-2018-03/source/stylesheets/highlight.css */
+.highlight .o, .highlight .ow {
+  color: #4df4ff;
+  font-weight: bold; }
+
+/* line 43, /home/jneen/src/prg-2018-03/source/stylesheets/highlight.css */
+.highlight .p, .highlight .pi {
+  color: #4df4ff; }
+
+/* line 46, /home/jneen/src/prg-2018-03/source/stylesheets/highlight.css */
+.highlight .gd {
+  color: #cc0000; }
+
+/* line 49, /home/jneen/src/prg-2018-03/source/stylesheets/highlight.css */
+.highlight .gi {
+  color: #b2fd6d; }
+
+/* line 52, /home/jneen/src/prg-2018-03/source/stylesheets/highlight.css */
+.highlight .ge {
+  font-style: italic; }
+
+/* line 55, /home/jneen/src/prg-2018-03/source/stylesheets/highlight.css */
+.highlight .gs {
+  font-weight: bold; }
+
+/* line 58, /home/jneen/src/prg-2018-03/source/stylesheets/highlight.css */
+.highlight .gt {
+  color: #dee5e7;
+  background-color: #4e5d62; }
+
+/* line 62, /home/jneen/src/prg-2018-03/source/stylesheets/highlight.css */
+.highlight .kc {
+  color: #f696db;
+  font-weight: bold; }
+
+/* line 66, /home/jneen/src/prg-2018-03/source/stylesheets/highlight.css */
+.highlight .kn {
+  color: #ffb000;
+  font-weight: bold; }
+
+/* line 70, /home/jneen/src/prg-2018-03/source/stylesheets/highlight.css */
+.highlight .kp {
+  color: #ffb000;
+  font-weight: bold; }
+
+/* line 74, /home/jneen/src/prg-2018-03/source/stylesheets/highlight.css */
+.highlight .kr {
+  color: #ffb000;
+  font-weight: bold; }
+
+/* line 78, /home/jneen/src/prg-2018-03/source/stylesheets/highlight.css */
+.highlight .gh {
+  color: #ffb000;
+  font-weight: bold; }
+
+/* line 82, /home/jneen/src/prg-2018-03/source/stylesheets/highlight.css */
+.highlight .gu {
+  color: #ffb000;
+  font-weight: bold; }
+
+/* line 86, /home/jneen/src/prg-2018-03/source/stylesheets/highlight.css */
+.highlight .kt {
+  color: #b2fd6d;
+  font-weight: bold; }
+
+/* line 90, /home/jneen/src/prg-2018-03/source/stylesheets/highlight.css */
+.highlight .no {
+  color: #b2fd6d;
+  font-weight: bold; }
+
+/* line 94, /home/jneen/src/prg-2018-03/source/stylesheets/highlight.css */
+.highlight .nc {
+  color: #b2fd6d;
+  font-weight: bold; }
+
+/* line 98, /home/jneen/src/prg-2018-03/source/stylesheets/highlight.css */
+.highlight .nd {
+  color: #b2fd6d;
+  font-weight: bold; }
+
+/* line 102, /home/jneen/src/prg-2018-03/source/stylesheets/highlight.css */
+.highlight .nn {
+  color: #b2fd6d;
+  font-weight: bold; }
+
+/* line 106, /home/jneen/src/prg-2018-03/source/stylesheets/highlight.css */
+.highlight .bp {
+  color: #b2fd6d;
+  font-weight: bold; }
+
+/* line 110, /home/jneen/src/prg-2018-03/source/stylesheets/highlight.css */
+.highlight .ne {
+  color: #b2fd6d;
+  font-weight: bold; }
+
+/* line 114, /home/jneen/src/prg-2018-03/source/stylesheets/highlight.css */
+.highlight .nl {
+  color: #ffb000;
+  font-weight: bold; }
+
+/* line 118, /home/jneen/src/prg-2018-03/source/stylesheets/highlight.css */
+.highlight .nt {
+  color: #ffb000;
+  font-weight: bold; }
+
+/* line 122, /home/jneen/src/prg-2018-03/source/stylesheets/highlight.css */
+.highlight .m, .highlight .mf, .highlight .mh, .highlight .mi, .highlight .il, .highlight .mo, .highlight .mb, .highlight .mx {
+  color: #f696db;
+  font-weight: bold; }
+
+/* line 126, /home/jneen/src/prg-2018-03/source/stylesheets/highlight.css */
+.highlight .ld {
+  color: #f696db;
+  font-weight: bold; }
+
+/* line 130, /home/jneen/src/prg-2018-03/source/stylesheets/highlight.css */
+.highlight .ss {
+  color: #f696db;
+  font-weight: bold; }
+
+/* line 134, /home/jneen/src/prg-2018-03/source/stylesheets/highlight.css */
+.highlight .s, .highlight .sb, .highlight .sd, .highlight .s2, .highlight .sh, .highlight .sx, .highlight .sr, .highlight .s1 {
+  color: #fff0a6;
+  font-weight: bold; }
+
+/* line 138, /home/jneen/src/prg-2018-03/source/stylesheets/highlight.css */
+.highlight .se {
+  color: #4df4ff;
+  font-weight: bold; }
+
+/* line 142, /home/jneen/src/prg-2018-03/source/stylesheets/highlight.css */
+.highlight .sc {
+  color: #4df4ff;
+  font-weight: bold; }
+
+/* line 146, /home/jneen/src/prg-2018-03/source/stylesheets/highlight.css */
+.highlight .si {
+  color: #4df4ff;
+  font-weight: bold; }
+
+/* line 150, /home/jneen/src/prg-2018-03/source/stylesheets/highlight.css */
+.highlight .nb {
+  font-weight: bold; }
+
+/* line 153, /home/jneen/src/prg-2018-03/source/stylesheets/highlight.css */
+.highlight .ni {
+  color: #999999;
+  font-weight: bold; }
+
+/* line 157, /home/jneen/src/prg-2018-03/source/stylesheets/highlight.css */
+.highlight .w {
+  color: #BBBBBB; }
+
+/* line 160, /home/jneen/src/prg-2018-03/source/stylesheets/highlight.css */
+.highlight .go {
+  color: #BBBBBB; }
+
+/* line 163, /home/jneen/src/prg-2018-03/source/stylesheets/highlight.css */
+.highlight .nf {
+  color: #a8e1fe; }
+
+/* line 166, /home/jneen/src/prg-2018-03/source/stylesheets/highlight.css */
+.highlight .py {
+  color: #a8e1fe; }
+
+/* line 169, /home/jneen/src/prg-2018-03/source/stylesheets/highlight.css */
+.highlight .na {
+  color: #a8e1fe; }
+
+/* line 172, /home/jneen/src/prg-2018-03/source/stylesheets/highlight.css */
+.highlight .nv, .highlight .vc, .highlight .vg, .highlight .vi {
+  color: #a8e1fe;
+  font-weight: bold; }
+
+/* line 14, /home/jneen/src/prg-2018-03/source/stylesheets/all.css.sass */
+.highlight {
+  padding: 10px; }
+
+/* line 1, /home/jneen/src/prg-2018-03/source/stylesheets/prettify.css */
+.pln {
+  color: #000; }
+
+@media screen {
+  /* line 1, /home/jneen/src/prg-2018-03/source/stylesheets/prettify.css */
+  .str {
+    color: #080; }
+
+  /* line 1, /home/jneen/src/prg-2018-03/source/stylesheets/prettify.css */
+  .kwd {
+    color: #008; }
+
+  /* line 1, /home/jneen/src/prg-2018-03/source/stylesheets/prettify.css */
+  .com {
+    color: #800; }
+
+  /* line 1, /home/jneen/src/prg-2018-03/source/stylesheets/prettify.css */
+  .typ {
+    color: #606; }
+
+  /* line 1, /home/jneen/src/prg-2018-03/source/stylesheets/prettify.css */
+  .lit {
+    color: #066; }
+
+  /* line 1, /home/jneen/src/prg-2018-03/source/stylesheets/prettify.css */
+  .pun, .opn, .clo {
+    color: #660; }
+
+  /* line 1, /home/jneen/src/prg-2018-03/source/stylesheets/prettify.css */
+  .tag {
+    color: #008; }
+
+  /* line 1, /home/jneen/src/prg-2018-03/source/stylesheets/prettify.css */
+  .atn {
+    color: #606; }
+
+  /* line 1, /home/jneen/src/prg-2018-03/source/stylesheets/prettify.css */
+  .atv {
+    color: #080; }
+
+  /* line 1, /home/jneen/src/prg-2018-03/source/stylesheets/prettify.css */
+  .dec, .var {
+    color: #606; }
+
+  /* line 1, /home/jneen/src/prg-2018-03/source/stylesheets/prettify.css */
+  .fun {
+    color: red; } }
+@media print, projection {
+  /* line 1, /home/jneen/src/prg-2018-03/source/stylesheets/prettify.css */
+  .str {
+    color: #060; }
+
+  /* line 1, /home/jneen/src/prg-2018-03/source/stylesheets/prettify.css */
+  .kwd {
+    color: #006;
+    font-weight: bold; }
+
+  /* line 1, /home/jneen/src/prg-2018-03/source/stylesheets/prettify.css */
+  .com {
+    color: #600;
+    font-style: italic; }
+
+  /* line 1, /home/jneen/src/prg-2018-03/source/stylesheets/prettify.css */
+  .typ {
+    color: #404;
+    font-weight: bold; }
+
+  /* line 1, /home/jneen/src/prg-2018-03/source/stylesheets/prettify.css */
+  .lit {
+    color: #044; }
+
+  /* line 1, /home/jneen/src/prg-2018-03/source/stylesheets/prettify.css */
+  .pun, .opn, .clo {
+    color: #440; }
+
+  /* line 1, /home/jneen/src/prg-2018-03/source/stylesheets/prettify.css */
+  .tag {
+    color: #006;
+    font-weight: bold; }
+
+  /* line 1, /home/jneen/src/prg-2018-03/source/stylesheets/prettify.css */
+  .atn {
+    color: #404; }
+
+  /* line 1, /home/jneen/src/prg-2018-03/source/stylesheets/prettify.css */
+  .atv {
+    color: #060; } }
+/* line 1, /home/jneen/src/prg-2018-03/source/stylesheets/prettify.css */
+pre.prettyprint {
+  padding: 2px;
+  border: 1px solid #888; }
+
+/* line 1, /home/jneen/src/prg-2018-03/source/stylesheets/prettify.css */
+ol.linenums {
+  margin-top: 0;
+  margin-bottom: 0; }
+
+/* line 1, /home/jneen/src/prg-2018-03/source/stylesheets/prettify.css */
+li.L0, li.L1, li.L2, li.L3, li.L5, li.L6, li.L7, li.L8 {
+  list-style-type: none; }
+
+/* line 1, /home/jneen/src/prg-2018-03/source/stylesheets/prettify.css */
+li.L1, li.L3, li.L5, li.L7, li.L9 {
+  background: #eee; }
+
+/* line 36, /home/jneen/src/prg-2018-03/source/stylesheets/all.css.sass */
+.cool-as-ice {
+  color: #6c8b9f; }
+
+/* line 38, /home/jneen/src/prg-2018-03/source/stylesheets/all.css.sass */
+.slate-blue {
+  color: #4e5d62; }
+
+/* line 40, /home/jneen/src/prg-2018-03/source/stylesheets/all.css.sass */
+.eggshell-cloud {
+  color: #dee5e7; }
+
+/* line 42, /home/jneen/src/prg-2018-03/source/stylesheets/all.css.sass */
+.krasna {
+  color: #122b3b; }
+
+/* line 44, /home/jneen/src/prg-2018-03/source/stylesheets/all.css.sass */
+.aluminum1 {
+  color: #fefeec; }
+
+/* line 46, /home/jneen/src/prg-2018-03/source/stylesheets/all.css.sass */
+.scarletred2 {
+  color: #cc0000; }
+
+/* line 48, /home/jneen/src/prg-2018-03/source/stylesheets/all.css.sass */
+.butter3 {
+  color: #c4a000; }
+
+/* line 50, /home/jneen/src/prg-2018-03/source/stylesheets/all.css.sass */
+.go-get-it {
+  color: #b2fd6d; }
+
+/* line 52, /home/jneen/src/prg-2018-03/source/stylesheets/all.css.sass */
+.chilly {
+  color: #a8e1fe; }
+
+/* line 54, /home/jneen/src/prg-2018-03/source/stylesheets/all.css.sass */
+.unicorn {
+  color: #faf6e4; }
+
+/* line 56, /home/jneen/src/prg-2018-03/source/stylesheets/all.css.sass */
+.sandy {
+  color: #f6dd62; }
+
+/* line 58, /home/jneen/src/prg-2018-03/source/stylesheets/all.css.sass */
+.pink-merengue {
+  color: #f696db; }
+
+/* line 60, /home/jneen/src/prg-2018-03/source/stylesheets/all.css.sass */
+.dune {
+  color: #fff0a6; }
+
+/* line 62, /home/jneen/src/prg-2018-03/source/stylesheets/all.css.sass */
+.backlit {
+  color: #4df4ff; }
+
+/* line 64, /home/jneen/src/prg-2018-03/source/stylesheets/all.css.sass */
+.schrill {
+  color: #ffb000; }
+
+/* line 67, /home/jneen/src/prg-2018-03/source/stylesheets/all.css.sass */
+h1.title {
+  font-weight: bold;
+  position: absolute;
+  top: 30%;
+  left: 25%; }
+
+/* line 73, /home/jneen/src/prg-2018-03/source/stylesheets/all.css.sass */
+.reveal {
+  font-size: 36px;
+  font-weight: 200;
+  width: 100%;
+  height: 100%; }
+  /* line 79, /home/jneen/src/prg-2018-03/source/stylesheets/all.css.sass */
+  .reveal h1, .reveal h2 {
+    letter-spacing: -0.02em;
+    font-family: "Libre Baskerville";
+    line-height: 0.9em;
+    letter-spacing: 0.02em;
+    text-transform: none;
+    text-shadow: none;
+    margin: 0.5em; }
+  /* line 87, /home/jneen/src/prg-2018-03/source/stylesheets/all.css.sass */
+  .reveal h1 {
+    text-shadow: 0px 0px 6px rgba(0, 0, 0, 0.2);
+    font-size: 3em; }
+  /* line 90, /home/jneen/src/prg-2018-03/source/stylesheets/all.css.sass */
+  .reveal h2 {
+    font-size: 2em; }
+  /* line 92, /home/jneen/src/prg-2018-03/source/stylesheets/all.css.sass */
+  .reveal h3 {
+    color: #f6dd62;
+    font-weight: bold; }
+  /* line 95, /home/jneen/src/prg-2018-03/source/stylesheets/all.css.sass */
+  .reveal section {
+    font-family: "Lato";
+    font-size: 1em;
+    line-height: 1.2em; }
+    /* line 100, /home/jneen/src/prg-2018-03/source/stylesheets/all.css.sass */
+    .reveal section .tagline {
+      margin-top: 1.5em;
+      font-size: 70%;
+      font-family: "Libre Baskerville";
+      font-style: italic; }
+  /* line 106, /home/jneen/src/prg-2018-03/source/stylesheets/all.css.sass */
+  .reveal a {
+    color: #b2fd6d; }
+  /* line 109, /home/jneen/src/prg-2018-03/source/stylesheets/all.css.sass */
+  .reveal strong, .reveal h3 {
+    font-weight: bold;
+    letter-spacing: 0.02em; }
+  /* line 113, /home/jneen/src/prg-2018-03/source/stylesheets/all.css.sass */
+  .reveal .vs {
+    display: inline-block;
+    width: 45%;
+    padding: 1em; }
+  /* line 118, /home/jneen/src/prg-2018-03/source/stylesheets/all.css.sass */
+  .reveal .vs3 {
+    display: inline-block;
+    width: 28%;
+    padding: 1em; }
+  /* line 123, /home/jneen/src/prg-2018-03/source/stylesheets/all.css.sass */
+  .reveal pre, .reveal code, .reveal .code {
+    text-align: left;
+    font-family: monospace;
+    font-style: normal; }
+    /* line 128, /home/jneen/src/prg-2018-03/source/stylesheets/all.css.sass */
+    .reveal pre emph, .reveal code emph, .reveal .code emph {
+      font-style: italic; }
+  /* line 131, /home/jneen/src/prg-2018-03/source/stylesheets/all.css.sass */
+  .reveal code, .reveal .code {
+    margin: 0 0.2em; }
+  /* line 135, /home/jneen/src/prg-2018-03/source/stylesheets/all.css.sass */
+  .reveal pre, .reveal .box {
+    padding: 0.5em;
+    border-radius: 1em;
+    border: 6px solid #c4a000;
+    background-color: #122b3b; }
+  /* line 141, /home/jneen/src/prg-2018-03/source/stylesheets/all.css.sass */
+  .reveal ul {
+    display: inline-block; }
+    /* line 144, /home/jneen/src/prg-2018-03/source/stylesheets/all.css.sass */
+    .reveal ul li {
+      text-align: left;
+      margin: 0.3em; }
+  /* line 148, /home/jneen/src/prg-2018-03/source/stylesheets/all.css.sass */
+  .reveal .bigger, .reveal h3 {
+    font-size: 130%;
+    line-height: 130%;
+    margin: 1em; }
+  /* line 153, /home/jneen/src/prg-2018-03/source/stylesheets/all.css.sass */
+  .reveal .space {
+    height: 0.75em; }
+  /* line 156, /home/jneen/src/prg-2018-03/source/stylesheets/all.css.sass */
+  .reveal .block {
+    display: block;
+    margin: 0.9em; }
+
+/* line 160, /home/jneen/src/prg-2018-03/source/stylesheets/all.css.sass */
+.i {
+  font-style: italic; }
+
+/* line 164, /home/jneen/src/prg-2018-03/source/stylesheets/all.css.sass */
+#intro img {
+  border: 0;
+  box-shadow: none; }
+
+/* line 168, /home/jneen/src/prg-2018-03/source/stylesheets/all.css.sass */
+body {
+  color: #faf6e4;
+  background-color: #18394f; }
+
+/* line 172, /home/jneen/src/prg-2018-03/source/stylesheets/all.css.sass */
+.reveal {
+  font-size: 36px;
+  font-weight: 200;
+  letter-spacing: -0.02em;
+  width: 100%;
+  height: 100%; }
+
+/* line 179, /home/jneen/src/prg-2018-03/source/stylesheets/all.css.sass */
+::selection {
+  color: white;
+  background: #b2fd6d;
+  text-shadow: none; }
