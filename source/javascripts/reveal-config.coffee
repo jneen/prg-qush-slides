@@ -4,5 +4,5 @@ Reveal.initialize
   height: 900
   history: true
   keyboard: true
-  transition: 'linear'
+  transition: 'slide'
   transitionSpeed: 'fast'

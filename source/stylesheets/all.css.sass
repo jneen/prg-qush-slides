@@ -92,6 +92,8 @@ h1.title
   h3
     color: $sandy
     font-weight: bold
+  h4
+    margin-bottom: 0.3em
   section
     font-family: "Lato"
     font-size: 1em
@@ -106,7 +108,12 @@ h1.title
   a
     color: $go-get-it
 
-  strong, h3
+  .left
+    text-align: left
+
+
+
+  strong, h3, h4
     font-weight: bold
     letter-spacing: 0.02em
 
@@ -114,11 +121,17 @@ h1.title
     display: inline-block
     width: 45%
     padding: 1em
+    vertical-align: top
 
   .vs3
     display: inline-block
     width: 28%
     padding: 1em
+
+  .replacement
+    position: relative
+    .fragment.current-visible
+      position: absolute
 
   pre, code, .code
     text-align: left
@@ -137,6 +150,13 @@ h1.title
     border-radius: 1em
     border: 6px solid $butter3
     background-color: $krasna
+
+  span.code
+    border: 2px solid $slate-blue
+    padding: 0.1em
+    background-color: $krasna
+    margin: 0.1em
+    white-space: nowrap
 
   ul
     display: inline-block
