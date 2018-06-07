@@ -384,7 +384,7 @@
   %h2 Concurrency: Concepts
 
   %p
-    Channels are <strong>unbuffered</strong>:
+    Channels are <strong>synchronous</strong>:
   %ul
     %li reader and writer must both be present to make a communication.
     %li Writes will <strong>block</strong> until the channel is read.
@@ -535,8 +535,10 @@
         (make-broadcaster) = (
           outputs = []
 
-          { (subscribe ?ch) = (%outputs = [...%outputs %ch])
-            (publish ?msg) = for %outputs | each (%ch => put %msg > %ch)) }
+          put {
+            (subscribe ?ch) = (%outputs = [...%outputs %ch])
+            (publish ?msg) = (for %outputs | each (%ch => put %msg > %ch))
+          }
         )
 
   %h4.fragment We can't keep a dynamic list of channels open continuously for writing.
@@ -578,8 +580,8 @@
       %h4 Multiple writers to stdout (<span class="code">&amp;1</span>)
       = code 'qsh' do
         :plain
-          (subscribe) = (
-            %channels = [...%channels &1]
+          (subscribe >?c) = (
+            %channels = [...%channels %c]
 
             # never return!
             # keep stdout open!
