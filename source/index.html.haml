@@ -10,7 +10,7 @@
     %p
       %code
         slides:
-        %a(href="https://jneen.github.io/prg-qush-slides") https://jneen.github.io/prg-2018-03
+        %a(href="https://jneen.github.io/prg-qush-slides") https://jneen.github.io/prg-qush-slides
     %p
       %code
         mailto:
@@ -356,20 +356,29 @@
   %h2 Concurrency: Concepts
 
   .vs>
+    %h4 Channels as values
     = code 'qsh' do
       :plain
         channel = (make-channel)
-        command < $channel
-        command > $channel
-
-        # anonymous
-        command | command | command
+        reader < $channel
+        writer > $channel
 
   .vs>
-    .block
-      %ul
-        %li Channels can be first-class values
-        %li Or anonymously created to connect pipes.
+    %h4 Anonymous channels (pipes)
+    = code 'qsh' do
+      :plain
+        command-1 | command-2
+
+        # equivalent to
+
+        channel = (make-channel)
+
+        spawn [
+          (=> command-1 > %channel)
+          (=> command-2 < %channel) ]
+
+-# vimmmm
+-# >
 
 %section
   %h2 Concurrency: Concepts
@@ -443,7 +452,7 @@
       %h4 This works!
       %p ...as long as there are no cleanup actions
 
-%section
+%section(data-transition="slide-in fade-out")
   %h2 Concurrency: Interruption
 
   %h3 But what if there are cleanup actions?
@@ -471,27 +480,25 @@
     .space
     %p.left They expect an <strong>interrupt</strong> signal of some kind.
 
-%section
+%section(data-transition="fade-in slide-out")
   %h2 Concurrency: Interruption
 
   %h3 Idea: channel-closing semantics
 
-  .vs
+  .vs>
     = code 'qsh' do
       :plain
+        (file-lines ?fname) = (
+          file = (open-file %fname
+            %%! close-file %fname)
+          ...
+        )
+
+
         file-lines /tmp/huge-file
           | take 10
 
-        # equivalent to
-
-        channel = (make-channel)
-
-        spawn [
-          (=> take 10 < %channel)
-          (=> file-lines /tmp/huge-file
-                > %channel) ]
-
-  .vs
+  .vs>
     %ul
       %li.fragment
         When
