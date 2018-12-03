@@ -5,6 +5,7 @@ class Qsh < Rouge::RegexLexer
 
   state :root do
     rule /\s+/, Text
+    rule /[▮▯]/, Comment::Preproc
     rule /#/, Comment, :comment
     rule /[.][.][.]/, Comment
     rule /[$][\w-]+/, Name::Variable
@@ -14,10 +15,10 @@ class Qsh < Rouge::RegexLexer
     rule /&\d+/, Name::Tag
 
     # weird negative lookahead stuff is to not consider `-` as a word boundary
-    rule /\b(?<!-)(put|get|for|each|incr|decr|spawn)(?!-)\b/, Name::Builtin
+    rule /\b(?<!-)(put|get|for|fan|each|incr|decr|spawn)(?!-)\b/, Name::Builtin
     rule /TODO|XXX/, Error
     rule /\d+(?!-)\b/, Num
-    rule /[\/\w-]+/, Name
+    rule /[.\/\w-]+/, Name
 
     rule /[(){}\[\]&|=;<>%+!]/, Punctuation
 
@@ -36,5 +37,13 @@ class Qsh < Rouge::RegexLexer
     rule /"/, Str::Double, :pop!
     rule /[$][\w-]+/, Name::Variable
     rule /[^"$]+/, Str::Double
+  end
+end
+
+class CursorScheme < Rouge::Lexers::Scheme
+  tag 'cursorscheme'
+
+  prepend :root do
+    rule /[▮▯]/, Comment::Preproc
   end
 end

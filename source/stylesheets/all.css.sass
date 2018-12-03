@@ -1,6 +1,6 @@
-@import reveal.css
+@import "reveal"
 
-@import url('//fonts.googleapis.com/css?family=Libre+Baskerville:i,400,700|Lato')
+@import "fonts"
 
 //reveal theme:
 //@import beige
@@ -10,11 +10,11 @@
 //@import simple
 //@import sky
 
-@import highlight
+@import "highlight"
 .highlight
   padding: 10px
 
-@import prettify
+@import "prettify"
 
 // pallette, from GTKSourceView's ThankfulEyes
 $cool-as-ice: #6c8b9f
@@ -75,6 +75,8 @@ h1.title
   font-weight: 200
   width: 100%
   height: 100%
+  em
+    font-style: italic
 
   h1, h2
     letter-spacing: -0.02em
@@ -132,6 +134,8 @@ h1.title
     position: relative
     .fragment.current-visible
       position: absolute
+      left: 0
+      right: 0
 
   pre, code, .code
     text-align: left
@@ -150,6 +154,10 @@ h1.title
     border-radius: 1em
     border: 6px solid $butter3
     background-color: $krasna
+
+  .box > ul
+    margin-left: 0.5em
+
 
   span.code
     border: 2px solid $slate-blue

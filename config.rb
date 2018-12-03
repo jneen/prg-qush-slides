@@ -29,6 +29,45 @@ module HighlightingHelpers
   end
 end
 
+class CSSImporter < Sass::Importers::Filesystem
+  def extensions
+    super.merge('css' => :scss)
+  end
+end
+Sass::Plugin.options[:filesystem_importer] = CSSImporter
+
+require 'base64'
+module ImageHelpers
+  def image_data(fname)
+    fname = "./source/images/#{fname}"
+    raw = File.read(fname)
+    b64 = Base64.encode64(raw)
+    fname =~ /[.](.?)\z/
+    ext = $1
+    "data:image/#{ext};base64,#{b64}"
+  end
+end
+helpers ImageHelpers
+
+module AssetHelper
+  ##
+  # Renders a stylesheet asset inline.
+  def inline_stylesheet( name )
+    content_tag :style, type: 'text/css' do
+      sprockets[ "#{name}.css" ].to_s
+    end
+  end
+
+  ##
+  # Renders a javascript asset inline.
+  def inline_javascript( name )
+    content_tag :script, type: 'text/javascript' do
+      sprockets[ "#{name}.js" ].to_s
+    end
+  end
+end
+helpers AssetHelper
+
 ###
 # Compass
 ###
