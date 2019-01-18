@@ -137,6 +137,15 @@ h1.title
       left: 0
       right: 0
 
+  .slides
+    section
+      .fragment.fragment-dim
+        opacity: 1
+        visibility: inherit
+        transition-duration: 0s
+        &.visible
+          opacity: 0.3
+
   pre, code, .code
     text-align: left
     font-family: monospace
@@ -154,6 +163,8 @@ h1.title
     border-radius: 1em
     border: 6px solid $butter3
     background-color: $krasna
+    &.box-special
+      background-color: mix($krasna, $cool-as-ice, 50%)
 
   .box > ul
     margin-left: 0.5em

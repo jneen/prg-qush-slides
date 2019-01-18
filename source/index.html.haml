@@ -1,25 +1,35 @@
 %section#intro
   %h1 Magritte
   -# %p A UNIX Shell Suitable For Large Programs / A pipe-oriented language
-  %p Composing Complex Concurrent Algorithms on a REPL Interface
+  %p A Shell-like Model for General Purpose Programming
   .tagline
-    %p Jeanine Adkisson, Johannes Westlund
+    %p Jeanine Adkisson, Johannes Westlund, Hidehiko Masuhara
     %p Programming Research Group, Tokyo Institute of Technology
-    %p
-      %code
-        advisor: Hidehiko Masuhara
     %p
       %code
         slides:
         %a(href="https://jneen.github.io/prg-qush-slides") https://jneen.github.io/prg-qush-slides
+
+    %p
+      %code
+        code:
+        %a(href="https://github.com/prg-titech/magritte") https://github.com/prg-titech/magritte
+
     %p
       %code
         mailto:
-        %a(href="mailto:jneen@prg.is.titech.ac.jp") jneen@prg.is.titech.ac.jp
+        %a(href="mailto:jneen@jneen.net") jneen@jneen.net
+        ,
+        %a(href="mailto:masuhara@acm.org") masuhara@acm.org
+
+  .space
+  .space
+  %p
+    -#%strong Opinions and Comments Welcome!
 
 
 %section<
-  %h2 Shells Are Bad.
+  %h2 Problem: Shells Are Bad.
   %h2 But Everyone Uses Them.
   .vs>
     = code 'shell' do
@@ -40,9 +50,9 @@
 
 
 %section
-  %h2 Why?
+  %h2 Why Does Everyone Use Shells?
   .vs3>
-    .box
+    .box.fragment.fragment-dim
       %h3 Ubiquity:
       .block
         Available on any UNIX platform!
@@ -59,17 +69,28 @@
         Designed for heavy REPL use
 
 %section
-  %h2 Design Philosophy
+  %h2 New Language: Magritte
 
   %h3 Goals:
+  .vs3>
+    .box
+      %h3 OS Fluency:
+      .block
+        &ldquo;Feels&rdquo; directly connected to the OS
 
-  %h4 OS Fluency
-  %h4 Optimize for REPL interaction
+  .vs3>
+    .box
+      %h3 REPL Feel
+      .block
+        Designed for heavy REPL use
 
-  .block
-  %code -- BUT ALSO --
+  .vs3>
+    .box.box-special
+      %h3 General Use
+      .block
+        A usable general-purpose language
 
-  %h4 Allow for large programs
+  %p Should be able to write large programs!
 
 // %section
 //   %h2 Design Philosophy
@@ -105,7 +126,7 @@
     .vs3>
       .box return codes
 
-  concepts every <span class="dune">&ldquo;general-purpose&rdquo;</span> programming language understands.
+  every <span class="dune">&ldquo;general-purpose&rdquo;</span> programming language understands these.
 
 
 %section(data-transition="fade-in slide-out")
@@ -185,7 +206,7 @@
             | each downcase | sort▮
 
   .space
-  %h4.fragment Goal: the user can always continue typing directly to the right to use previous results
+  %h4.fragment Design Goal: Can always continue typing to use previous results
 
 %section
   %h2 Language Design
@@ -200,26 +221,32 @@
 
     .box
       %ul
-        %li Data structures are impossible/inconvenient
-        %li Anonymous functions are impossible/inconvenient
+        %li Variables can hold strings, lists, or associative arrays, <strong>but</strong>
+        %li Function arguments and pipes can only receive or output strings
+        -#%li Data structures are impossible/inconvenient
+        -#%li Anonymous functions are impossible/inconvenient
         %li Makes large programs an unreasonable goal
 
   .vs>
-    %h3 Solution:<br> Not everything is a string!
+    %h3 Solution:<br> Introduce values!
     .box
       %ul
         %li
-          Variables can hold <strong>values</strong>: string, number,
-          vector, environment, channel, process, function
+          <strong>values</strong> can be:
+          string, number, vector, environment,
+          channel, process, function, etc.
         %li
-          Channels can handle values, not just bytes
-        %li
-          Functions take values as arguments
+          Can be used in variables, function arguments, and
+          <strong>can be passed through pipes</strong>
+        -#%li
+        -#  Channels can handle values, not just bytes
+        -#%li
+        -#  Functions take values as arguments, and output values
 
   .block
     %p
       This is in contrast with projects like <code>es</code> or
-      <code>fish</code>
+      <code>fish</code>, where pipes can only receive bytes.
 
 %section
   %h2 Language Design: Call Semantics
@@ -227,9 +254,9 @@
     %h4 Problem: Shell functions don't have return values
     %h4 Solution: Multiple return values using stdout.
 
-  .block
+  .block(style="margin-top: -2em")
     .vs>
-      %h3 Functions <code>put</code> values
+      %h3 Processes <code>put</code> values
       = code 'qsh' do
         :plain
           (count-three) = (
@@ -237,8 +264,11 @@
             put 2
             put 3
           )
-    .vs>
-      %h3 ...which are expanded
+
+      .space
+      %h4 How should we capture these outputs?
+    .vs.fragment>
+      %h3 Expansion
       = code 'console?lang=qsh' do
         :plain
           ; put 0 (count-three) 4
@@ -248,7 +278,8 @@
 
           => 0; => 1; => 2; => 3; => 4
 
-  Equivalent to shell <code>$(command arg arg)</code>, but without the whitespace issues
+  .fragment(style="margin-top: -1.5em")
+    Equivalent to shell <code>$(command arg arg)</code>, but without the whitespace issues
 
 
 %section(data-transition="slide-in fade-out")
@@ -467,310 +498,322 @@
 /        command |[5>2] command
 /        command |[2>$ERROR_LOG] command
 
-/ %section
-/   %h2 Concurrency Model
-/ 
-/   .vs
-/     %ul
-/       %li.fragment
-/         Users can freely spawn
-/         %strong.dune processes
-/       %li.fragment
-/         Processes communicate and coordinate through
-/         %strong.dune synchronous channels
-/       %li.fragment
-/         %strong.go-get-it [new]
-/         Processes
-/         %strong.dune register
-/         their open input/output channels at startup, and
-/         %strong.dune deregister
-/         them at exit.
-/       %li.fragment
-/         %strong.go-get-it [new]
-/         A channel
-/         %strong.dune closes
-/         when either its last registered reader or registered writer exits.
-/         At closing, we
-/         %strong.dune interrupt
-/         all blocked processes, as well as any process that attempts to
-/         reopen the channel.
-/ 
-/   %h4.fragment (Will explain all this in later slides!)
-/ 
-/ 
-/ 
-/ 
-/ %section
-/   %h2 Concurrency: Concepts
-/ 
-/   .vs>
-/     %h4 Channels as values
-/     = code 'qsh' do
-/       :plain
-/         channel = (make-channel)
-/         reader < $channel
-/         writer > $channel
-/ 
-/     .space
-/ 
-/     %h4 Simple Spawning
-/     = code 'qsh' do
-/       :plain
-/         & some-function arg arg
-/         & some-function >$out <$in
-/         & foo | bar | baz
-/     -#>
-/ 
-/ 
-/   .vs>
-/     %h4 Anonymous channels (pipes)
-/     = code 'qsh' do
-/       :plain
-/         command-1 | command-2
-/ 
-/         # equivalent to
-/ 
-/         channel = (make-channel)
-/ 
-/         & command-1 > $channel
-/         command-2 < $channel
-/ 
-/ -# vimmmm
-/ -# >
-/ 
-/ %section
-/   %h2 Concurrency: Concepts
-/ 
-/   %p
-/     Channels are <strong>synchronous</strong>:
-/   %ul
-/     %li reader and writer must both be present to make a communication.
-/     %li Writes will <strong>block</strong> until the channel is read.
-/ 
-/   .vs>
-/     %h4 Block on read
-/     = code 'qsh' do
-/       :plain
-/         (sleep 10; put 1) | get
-/ 
-/ 
-/   .vs>
-/     %h4 Block on write
-/     = code 'qsh' do
-/       :plain
-/         put 1 | (sleep 10; get)
-/ 
-/   %h4.fragment This is different than bash!
-/ 
-/ %section
-/   %h2 Concurrency: Interruption
-/ 
-/   %h3 What should the behavior of this code be?
-/ 
-/   .vs>
-/     = code 'qsh' do
-/       :plain
-/         (count-forever ?n) = (
-/           put $n
-/           count-forever (incr $n)
-/         )
-/ 
-/         (take 0) = ()
-/         (take ?n) = (
-/           put (get)
-/           take (decr $n)
-/         )
-/ 
-/         count-forever 0 | take 10
-/ 
-/   .replacement.vs>
-/     .fragment.current-visible
-/       = code 'qsh' do
-/         :plain
-/           => 0; => 1; => 2; => ...; => 9
-/ 
-/           # but what happens to the process
-/           # running `count-forever`...?
-/ 
-/     .block.fragment
-/       %h4 Naive Approach: Nothing!
-/ 
-/       %ul
-/         %li
-/           %span.code count-forever
-/           tries to write 10 to the output, blocks
-/         %li
-/           %span.code take
-/           returns after 9, never reads
-/         %li
-/           %span.code count-forever
-/           gets garbage-collected later
-/ 
-/     .fragment.box
-/       %h4 This works!
-/       %p ...as long as there are no cleanup actions
-/ 
-/ %section(data-transition="slide-in fade-out")
-/   %h2 Concurrency: Interruption
-/ 
-/   %h3 But what if there are cleanup actions?
-/ 
-/   .vs>
-/     = code 'qsh' do
-/       :plain
-/         (file-lines ?fname) = (
-/           file = (open-file $fname
-/             %%! close-file $fname)
-/           ...
-/         )
-/ 
-/ 
-/         file-lines /tmp/huge-file
-/           | take 10
-/ 
-/   .vs.nfragment>
-/     %h4
-/       With the naive approach, the file will remain open until gc!
-/ 
-/     .space
-/     %p.left Processes expect to be cleaned up when the processes they're communicating with hang up.
-/ 
-/     .space
-/     %p.left They expect an <strong>interrupt</strong> signal of some kind.
-/ 
-/ %section(data-transition="fade-in slide-out")
-/   %h2 Concurrency: Interruption
-/ 
-/   %h3 Idea: channel-closing semantics
-/ 
-/   .vs>
-/     = code 'qsh' do
-/       :plain
-/         (file-lines ?fname) = (
-/           file = (open-file $fname
-/             %%! close-file $fname)
-/           ...
-/         )
-/ 
-/ 
-/         file-lines /tmp/huge-file
-/           | take 10
-/ 
-/   .vs>
-/     %ul
-/       %li.fragment
-/         When
-/         %span.code take 10
-/         returns, it
-/         %strong closes
-/         the channel.
-/ 
-/       %li.fragment
-/         The
-/         %span.code file-lines
-/         process is either blocked on the channel or tries to write later
-/ 
-/       %li.fragment
-/         Either situation results in the
-/         %span.code file-lines
-/         process being
-/         %strong< interrupted
-/         , and having its cleanup actions run.
-/ 
-/       .space
-/       %h4.fragment This is how it works in bash already!
-/ 
-/ %section
-/   %h2 Concurrency: Interruption
-/ 
-/   %h3 Multiple Readers/Writers
-/ 
-/   .block
-/     Since spawned processes inherit inputs and outputs,<br>
-/     it will be common to have <strong>multiple readers and writers</strong><br>
-/     interacting with a channel at the same time.
-/ 
-/   = code 'qsh' do
-/     :plain
-/       (drain) = (put (get); drain)
-/ 
-/       ; count-forever | (& drain; & drain; & drain) | take 10
-/ 
-/       => 1 0 3 2 5 4 7 6 9 8
-/ 
-/ %section
-/   %h2 Concurrency: Interruption
-/ 
-/   %h3 Idea: Interrupt a process when it's probably blocked forever
-/ 
-/   %h4.fragment (Remember: we bind channels at process spawn time!)
-/ 
-/   %center.fragment
-/     close a channel when:<br>
-/     %strong.bigger.fragment
-/       The last reader exits
-/     %br/
-/ 
-/     .fragment
-/       \~ or ~
-/       %br/
-/ 
-/       %strong.bigger
-/         The last writer exits
-/ 
-/ %section
-/   %h2 Concurrency: Interruption
-/ 
-/   %h3 Idea: Interrupt a process when it's probably blocked forever
-/ 
-/   %center
-/     interrupt a process when:<br>
-/     %strong.bigger.fragment
-/       a channel it is blocked on closes
-/     %br/
-/ 
-/     .fragment
-/       \~ or ~
-/       %br/
-/ 
-/       %strong.bigger
-/         it tries to interact with a closed channel
-/       .fragment (why?)
-/ 
-/ %section
-/   %h2 Concurrency: Interruption
-/ 
-/   %h3 Problem: Reopening
-/ 
-/   .vs>
-/     %h4 What should this code do?
-/ 
-/     = code 'qsh' do
-/       :plain
-/         c = (make-channel)
-/         & count-forever > $c
-/         & take 10 < $c
-/         put 10 > $c
-/     .space
-/ 
-/     %p.fragment
-/       This code contains a <strong>race condition</strong>.
-/ 
-/     -#>
-/   .vs>
-/     %div
-/       %p.left.fragment
-/         If <code>take 10</code> returns before <code>put 10</code> is executed,
-/         the channel will <strong>close</strong>. Otherwise the number 10 will be
-/         inserted into the first 10 elements.
-/       .space
-/       %p.left.fragment
-/         If we allow <code>$c</code> to be <strong>reopened</strong>, then
-/         there is a worse race condition: if the channel closes before the final
-/         <code>put</code>, we will remain blocked forever on the channel.
-/ 
-/   %h4.fragment
-/     Therefore: Channel closing is permanent - further interactions will interrupt
+%section
+  %h2 Concurrency Model
+
+  .vs
+    %ul
+      %li.fragment
+        Users can freely spawn
+        %strong.dune processes
+      %li.fragment
+        Processes communicate and coordinate through
+        %strong.dune synchronous channels
+      %li.fragment
+        -#%strong.go-get-it [new]
+        Processes
+        %strong.dune register
+        their open input/output channels at startup, and
+        %strong.dune deregister
+        them at exit.
+      %li.fragment
+        -#%strong.go-get-it [new]
+        A channel
+        %strong.dune closes
+        when either its last registered reader or registered writer exits.
+        At closing, we
+        %strong.dune interrupt
+        all blocked processes, as well as any process that attempts to
+        reopen the channel.
+
+  %h4.fragment (Will explain all this in later slides!)
+
+
+
+
+%section
+  %h2 Concurrency: Concepts
+
+  .vs>
+    %h4 Channels as values
+    = code 'qsh' do
+      :plain
+        channel = (make-channel)
+
+        # write values with `put`
+        put 1 2 3 > $channel
+
+        # read a value with `get`
+        get < $channel
+    -#>
+
+    .space
+
+    %h4 Spawning: Run in the background
+    = code 'qsh' do
+      :plain
+        & some-function arg arg
+        & some-function >$out <$in
+        & foo | bar | baz
+    -#>
+
+
+  .vs>
+    %h4 Anonymous channels (pipes)
+    = code 'qsh' do
+      :plain
+        command-1 | command-2
+
+        # equivalent to
+
+        channel = (make-channel)
+
+        & command-1 > $channel
+        command-2 < $channel
+
+-# vimmmm
+-# >
+
+%section
+  %h2 Concurrency: Concepts
+
+  %p
+    Channels are <strong>synchronous</strong>:
+  %ul
+    %li reader and writer must both be present to make a communication.
+    %li Writes will <strong>block</strong> until the channel is read.
+
+  .vs>
+    %h4 Block on read
+    = code 'qsh' do
+      :plain
+        (sleep 10; put 1) | (get; put 2)
+
+
+  .vs>
+    %h4 Block on write
+    = code 'qsh' do
+      :plain
+        put 1 | (sleep 10; get)
+
+  %h4.fragment This is different than bash!
+
+%section
+  %h2 Concurrency: Interruption
+
+  %h3 What should the behavior of this code be?
+
+  .vs>
+    = code 'qsh' do
+      :plain
+        (count-forever ?n) = (
+          put $n
+          count-forever (incr $n)
+        )
+
+        (take 0) = ()
+        (take ?n) = (
+          put (get)
+          take (decr $n)
+        )
+
+        count-forever 0 | take 10
+
+  .replacement.vs>
+    .fragment.current-visible
+      = code 'qsh' do
+        :plain
+          => 0; => 1; => 2; => ...; => 9
+
+          # but what happens to the process
+          # running `count-forever`...?
+
+    .block.fragment
+      %h4 Naive Approach: Nothing!
+
+      %ul
+        %li
+          %span.code count-forever
+          tries to write 10 to the output, blocks
+        %li
+          %span.code take
+          returns after 9, never reads
+        %li
+          %span.code count-forever
+          gets garbage-collected later
+
+    .fragment.box
+      %h4 This works!
+      %p ...as long as there are no cleanup actions
+
+%section(data-transition="slide-in fade-out")
+  %h2 Concurrency: Interruption
+
+  %h3 But what if there are cleanup actions?
+
+  .vs>
+    = code 'qsh' do
+      :plain
+        (file-lines ?fname) = (
+          file = (open-file $fname
+            %%! close-file $fname)
+          ...
+        )
+
+
+        file-lines /tmp/huge-file
+          | take 10
+
+  .vs.nfragment>
+    %h4
+      With the naive approach, the file will remain open until gc!
+
+    .space
+    %p.left Processes expect to be cleaned up when the processes they're communicating with hang up.
+
+    .space
+    %p.left They expect an <strong>interrupt</strong> signal of some kind.
+
+%section(data-transition="fade-in slide-out")
+  %h2 Concurrency: Interruption
+
+  %h3 Idea: channel-closing semantics
+
+  .vs>
+    = code 'qsh' do
+      :plain
+        (file-lines ?fname) = (
+          file = (open-file $fname
+            %%! close-file $fname)
+          ...
+        )
+
+
+        file-lines /tmp/huge-file
+          | take 10
+
+  .vs>
+    %ul
+      %li.fragment
+        When
+        %span.code take 10
+        returns, it
+        %strong closes
+        the channel.
+
+      %li.fragment
+        The
+        %span.code file-lines
+        process is either blocked on the channel or tries to write later
+
+      %li.fragment
+        Either situation results in the
+        %span.code file-lines
+        process being
+        %strong< interrupted
+        , and having its cleanup actions run.
+
+      .space
+      %h4.fragment This is how it works in bash already!
+
+%section
+  %h2 Concurrency: Interruption
+
+  %h3 Multiple Readers/Writers
+
+  .block
+    Since spawned processes inherit inputs and outputs,<br>
+    it will be common to have <strong>multiple readers and writers</strong><br>
+    interacting with a channel at the same time.
+
+  .block.fragment
+    %p
+      %strong If we close channels when a process exits, how should this code behave?
+
+    = code 'qsh' do
+      :plain
+        (drain) = (put (get); drain)
+
+        put one two three four five | (& take 2; & take 10) | take 5
+
+  -#=> 0 1 3 2 4
+
+  .space
+  %h4.fragment We must leave channels open if they're still in use
+
+%section
+  %h2 Concurrency: Interruption
+
+  %h3 Idea: Interrupt a process when it's probably blocked forever
+
+  %h4.fragment (Remember: we bind channels at process spawn time!)
+
+  %center.fragment
+    close a channel when:<br>
+    %strong.bigger.fragment
+      The last reader exits
+    %br/
+
+    .fragment
+      \~ or ~
+      %br/
+
+      %strong.bigger
+        The last writer exits
+
+%section
+  %h2 Concurrency: Interruption
+
+  %h3 Idea: Interrupt a process when it's probably blocked forever
+
+  %center
+    interrupt a process when:<br>
+    %strong.bigger.fragment
+      a channel it is blocked on closes
+    %br/
+
+    .fragment
+      \~ or ~
+      %br/
+
+      %strong.bigger
+        it tries to interact with a closed channel
+      -#.fragment (why?)
+
+-#%section
+-#  %h2 Concurrency: Interruption
+-#
+-#  %h3 Problem: Reopening
+-#
+-#  .vs>
+-#    %h4 What should this code do?
+-#
+-#    = code 'qsh' do
+-#      :plain
+-#        c = (make-channel)
+-#        & count-forever > $c
+-#        & take 10 < $c
+-#        put 10 > $c
+-#    .space
+-#
+-#    %p.fragment
+-#      This code contains a <strong>race condition</strong>.
+-#
+-#    -#>
+-#  .vs>
+-#    %div
+-#      %p.left.fragment
+-#        If <code>take 10</code> returns before <code>put 10</code> is executed,
+-#        the channel will <strong>close</strong>. Otherwise the number 10 will be
+-#        inserted into the first 10 elements.
+-#      .space
+-#      %p.left.fragment
+-#        If we allow <code>$c</code> to be <strong>reopened</strong>, then
+-#        there is a worse race condition: if the channel closes before the final
+-#        <code>put</code>, we will remain blocked forever on the channel.
+-#
+-#  %h4.fragment
+-#    Therefore: Channel closing is permanent - further interactions will interrupt
 
 
 /%section
@@ -834,12 +877,18 @@
 %section
   %h2 Implementation Progress
 
+  %p
+    %code
+      code:
+      %a(href="https://github.com/prg-titech/magritte" style="text-decoration: none") https://github.com/prg-titech/magritte
+
   .block
     %ul
-      %li Completed! Ruby Interpreter (&ldquo;magritte&rdquo;)
+      %li Ruby Interpreter (&ldquo;magritte&rdquo;)
       %li Many more features and tests to be added
       %li TODO: design a VM, bootstrap with RPython
       %li.fragment (if time) DEMO
+
 
 / %section
 /   %h2 Magritte
