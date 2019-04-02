@@ -52,8 +52,8 @@ helpers ImageHelpers
 module AssetHelper
   ##
   # Renders a stylesheet asset inline.
-  def inline_stylesheet( name )
-    content_tag :style, type: 'text/css' do
+  def inline_stylesheet(name, opts={})
+    content_tag :style, { type: 'text/css' }.merge(opts) do
       sprockets[ "#{name}.css" ].to_s
     end
   end

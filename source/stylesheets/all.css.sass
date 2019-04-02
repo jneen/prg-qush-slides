@@ -32,6 +32,11 @@ $pink-merengue: #f696db
 $dune: #fff0a6
 $backlit: #4df4ff
 $schrill: #ffb000
+$dragon: #38C46D
+
+.highlight .c, .highlight .cd, .highlight .cm, .highlight .c1, .highlight .cs
+  color: lighten($dragon, 10%) !important
+  font-style: italic
 
 .cool-as-ice
   color: $cool-as-ice
@@ -189,6 +194,10 @@ h1.title
     line-height: 130%
     margin: 1em
 
+  .smaller, .cite
+    font-size: 70%
+    line-height: 70%
+
   .space
     height: 0.75em
 
@@ -214,6 +223,14 @@ body
   letter-spacing: -0.02em
   width: 100%
   height: 100%
+
+  .bubble
+    text-color: white
+    padding: 0.3em
+    border-radius: 0.3em
+    background-color: darken($scarletred2, 20%)
+    z-index: 10000
+    position: absolute
 
 ::selection
   color: white

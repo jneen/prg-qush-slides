@@ -22,11 +22,6 @@
         ,
         %a(href="mailto:masuhara@acm.org") masuhara@acm.org
 
-  .space
-  .space
-  %p
-    -#%strong Opinions and Comments Welcome!
-
 
 %section<
   %h2 Problem: Shells Are Bad.
@@ -36,6 +31,7 @@
       :plain
         #!/bin/bash
 
+        # complicated defaults
         getc() {
           IFS= read -r -n1 -d '' "$@"
         }
@@ -44,6 +40,7 @@
       :plain
         #!/bin/bash
 
+        # whitespace separation issues
         greeting='hello world'
         count-argv $greeting # => 2
         count-argv 'hello world' # => 1
@@ -197,13 +194,13 @@
       = code 'qsh' do
         :plain
           # user types
-          file-lines url-list.txt | fan 4 fetch-webpage▮
+          file-lines url-list.txt | fan 4 %fetch-webpage▮
     .fragment
       = code 'qsh' do
         :plain
           # user continues typing
-          file-lines url-list.txt | fan 4 fetch-webpage | each [html-select .title]
-            | each downcase | sort▮
+          file-lines url-list.txt | fan 4 %fetch-webpage | each [%html-select title]
+            | each %downcase | sort▮
 
   .space
   %h4.fragment Design Goal: Can always continue typing to use previous results
@@ -211,6 +208,136 @@
 %section
   %h2 Language Design
   %h3 Allowing for large programs
+
+%section
+  %h2 High-level Example
+
+  .block
+    .replacement
+      .fragment.current-visible
+        = code 'qsh' do
+          :plain
+            # given a filename that contains a list of urls,
+            # return all the titles and descriptions.
+            (get-titles-and-descriptions ?f) = (
+              file-lines $f
+                | fan $threads %get-webpage
+                | each (?page =>
+                    put [($page!select title)
+                         ($page!select description)])
+                | each [%map %downcase]
+            )
+
+      .fragment.current-visible
+        = code 'qsh' do
+          :plain
+            # given a filename that contains a list of urls,
+            # return all the titles and descriptions.
+            (get-titles-and-descriptions ?f) = (
+            # file-lines $f
+            #   | fan $threads %get-webpage
+            #   | each (?page =>
+            #       put [($page!select title)
+            #            ($page!select description)])
+            #   | each [%map %downcase]
+            )
+
+      .fragment.current-visible
+        .bubble(style="top: 25%; right: 5%")
+          %p
+            each line is <strong>output</strong>
+            as a separate string
+        = code 'qsh' do
+          :plain
+            # given a filename that contains a list of urls,
+            # return all the titles and descriptions.
+            (get-titles-and-descriptions ?f) = (
+              file-lines $f
+            #   | fan $threads %get-webpage
+            #   | each (?page =>
+            #       put [($page!select title)
+            #            ($page!select description)])
+            #   | each [%map %downcase]
+            )
+
+      .fragment.current-visible
+        .bubble(style="top: 30%; right: 15%")
+          %p
+            concurrent processing with a<br>
+            function (passed by value)
+        = code 'qsh' do
+          :plain
+            # given a filename that contains a list of urls,
+            # return all the titles and descriptions.
+            (get-titles-and-descriptions ?f) = (
+              file-lines $f
+                | fan $threads %get-webpage
+            #   | each (?page =>
+            #       put [($page!select title)
+            #            ($page!select description)])
+            #   | each [%map %downcase]
+            )
+
+      .fragment.current-visible
+        .bubble(style="top: 43%; right: 15%")
+          %p
+            call a lambda function on every input
+        = code 'qsh' do
+          :plain
+            # given a filename that contains a list of urls,
+            # return all the titles and descriptions.
+            (get-titles-and-descriptions ?f) = (
+              file-lines $f
+                | fan $threads %get-webpage
+                | each (?page =>
+            #       put [($page!select title)
+            #            ($page!select description)])
+            #   | each [%map %downcase]
+            )
+
+      .fragment.current-visible
+        .bubble(style="bottom: 35%; right: 15%")
+          %p
+            parentheses <strong>collect</strong> the output
+
+        .bubble(style="bottom: 5%; right: 15%")
+          %p
+            unquoted names are strings (&ldquo;barewords&rdquo;)
+        = code 'qsh' do
+          :plain
+            # given a filename that contains a list of urls,
+            # return all the titles and descriptions.
+            (get-titles-and-descriptions ?f) = (
+              file-lines $f
+                | fan $threads %get-webpage
+                | each (?page =>
+                    put [($page!select title)
+                         ($page!select description)])
+            #   | each [%map %downcase]
+            )
+
+      .fragment
+        .bubble(style="bottom: 15%; right: 15%")
+          %p
+            a vector is <strong>callable</strong><br>
+            as a curried function
+
+        = code 'qsh' do
+          :plain
+            # given a filename that contains a list of urls,
+            # return all the titles and descriptions.
+            (get-titles-and-descriptions ?f) = (
+              file-lines $f
+                | fan $threads %get-webpage
+                | each (?page =>
+                    put [($page!select title)
+                         ($page!select description)])
+                | each [%map %downcase]
+            )
+  %p.fragment
+    This kind of pipeline would be impossible in shell! ...but the
+    composition strategy is exactly the same
+
 
 
 %section
@@ -342,39 +469,39 @@
 
   Dynamic variables = UNIX environment variables
 
-%section
-  %h2 Language Design: Objects
-
-  .block
-    .vs>
-      %h3 Instantiation
-      = code 'qsh' do
-        :plain
-          my-env = {
-            # regular members
-            x = 1
-
-            # functions
-            (set-x ?value) = (
-              # $self set dynamically
-              # as in javascript
-              $self!x = %value
-            )
-          }
-
-    .vs>
-      %h3 Usage
-      = code 'qsh' do
-        :plain
-          # regular members
-          $my-env!x
-
-          # functions
-          $my-env!my-function 23
-
-          +$my-env (
-            my-function $x
-          )
+/%section
+/  %h2 Language Design: Objects
+/
+/  .block
+/    .vs>
+/      %h3 Instantiation
+/      = code 'qsh' do
+/        :plain
+/          my-env = {
+/            # regular members
+/            x = 1
+/
+/            # functions
+/            (set-x ?value) = (
+/              # $self set dynamically
+/              # as in javascript
+/              $self!x = %value
+/            )
+/          }
+/
+/    .vs>
+/      %h3 Usage
+/      = code 'qsh' do
+/        :plain
+/          # regular members
+/          $my-env!x
+/
+/          # functions
+/          $my-env!my-function 23
+/
+/          +$my-env (
+/            my-function $x
+/          )
 
 
 
@@ -574,29 +701,29 @@
 -# vimmmm
 -# >
 
-%section
-  %h2 Concurrency: Concepts
-
-  %p
-    Channels are <strong>synchronous</strong>:
-  %ul
-    %li reader and writer must both be present to make a communication.
-    %li Writes will <strong>block</strong> until the channel is read.
-
-  .vs>
-    %h4 Block on read
-    = code 'qsh' do
-      :plain
-        (sleep 10; put 1) | (get; put 2)
-
-
-  .vs>
-    %h4 Block on write
-    = code 'qsh' do
-      :plain
-        put 1 | (sleep 10; get)
-
-  %h4.fragment This is different than bash!
+-#%section
+-#  %h2 Concurrency: Concepts
+-#
+-#  %p
+-#    Channels are <strong>synchronous</strong>:
+-#  %ul
+-#    %li reader and writer must both be present to make a communication.
+-#    %li Writes will <strong>block</strong> until the channel is read.
+-#
+-#  .vs>
+-#    %h4 Block on read
+-#    = code 'qsh' do
+-#      :plain
+-#        (sleep 10; put 1) | (get; put 2)
+-#
+-#
+-#  .vs>
+-#    %h4 Block on write
+-#    = code 'qsh' do
+-#      :plain
+-#        put 1 | (sleep 10; get)
+-#
+-#  %h4.fragment This is different than bash!
 
 %section
   %h2 Concurrency: Interruption
@@ -674,6 +801,8 @@
     .space
     %p.left They expect an <strong>interrupt</strong> signal of some kind.
 
+  %p.cite <em>Inoue, Aotani, and Igarashi [2018]: &ldquo;ContextWorkFlow: A Monadic DSL for Compensable and Interruptible Executions&rdquo;</em>
+
 %section(data-transition="fade-in slide-out")
   %h2 Concurrency: Interruption
 
@@ -713,8 +842,8 @@
         %strong< interrupted
         , and having its cleanup actions run.
 
-      .space
-      %h4.fragment This is how it works in bash already!
+      -#.space
+      -#%h4.fragment This is how it works in bash already!
 
 %section
   %h2 Concurrency: Interruption
@@ -722,6 +851,7 @@
   %h3 Multiple Readers/Writers
 
   .block
+    <strong>BUT: </strong>
     Since spawned processes inherit inputs and outputs,<br>
     it will be common to have <strong>multiple readers and writers</strong><br>
     interacting with a channel at the same time.
@@ -746,39 +876,40 @@
 
   %h3 Idea: Interrupt a process when it's probably blocked forever
 
-  %h4.fragment (Remember: we bind channels at process spawn time!)
+  %h4.pink-merengue &ldquo;The last one to leave has to turn off the lights&rdquo;
 
-  %center.fragment
+  .space
+
+  %center
     close a channel when:<br>
-    %strong.bigger.fragment
+    %strong.bigger
       The last reader exits
     %br/
 
-    .fragment
-      \~ or ~
-      %br/
-
-      %strong.bigger
-        The last writer exits
-
-%section
-  %h2 Concurrency: Interruption
-
-  %h3 Idea: Interrupt a process when it's probably blocked forever
-
-  %center
-    interrupt a process when:<br>
-    %strong.bigger.fragment
-      a channel it is blocked on closes
+    \~ or ~
     %br/
 
-    .fragment
-      \~ or ~
-      %br/
+    %strong.bigger
+      The last writer exits
 
-      %strong.bigger
-        it tries to interact with a closed channel
-      -#.fragment (why?)
+-#%section
+-#  %h2 Concurrency: Interruption
+-#
+-#  %h3 Idea: Interrupt a process when it's probably blocked forever
+-#
+-#  %center
+-#    interrupt a process when:<br>
+-#    %strong.bigger.fragment
+-#      a channel it is blocked on closes
+-#    %br/
+-#
+-#    .fragment
+-#      \~ or ~
+-#      %br/
+-#
+-#      %strong.bigger
+-#        it tries to interact with a closed channel
+-#      -#.fragment (why?)
 
 -#%section
 -#  %h2 Concurrency: Interruption
@@ -876,7 +1007,6 @@
 
 %section
   %h2 Implementation Progress
-
   %p
     %code
       code:
@@ -884,10 +1014,23 @@
 
   .block
     %ul
-      %li Ruby Interpreter (&ldquo;magritte&rdquo;)
-      %li Many more features and tests to be added
-      %li TODO: design a VM, bootstrap with RPython
-      %li.fragment (if time) DEMO
+      %li
+        %strong.sandy [done]
+        Ruby Interpreter (&ldquo;magritte&rdquo;)
+      %li
+        %strong.sandy [done]
+        Feature complete!
+      -# %li
+      -#   %strong.pink-merengue [future-work]
+      -#   write some example programs, develop programming patterns and styles (Johannes)
+      %li
+        %strong.pink-merengue [future-work: HARD]
+        write the UNIX integration layer
+      %li
+        %strong.pink-merengue [future-work (later)]
+        design a VM, bootstrap with RPython
+      %li.fragment
+        %strong.go-get-it DEMO
 
 
 / %section
