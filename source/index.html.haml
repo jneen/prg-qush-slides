@@ -3,7 +3,9 @@
   -# %p A UNIX Shell Suitable For Large Programs / A pipe-oriented language
   %p A Shell-like Model for General Purpose Programming
   .tagline
-    %p Jeanine Adkisson, Johannes Westlund, Hidehiko Masuhara
+    %p
+      .bigger Jeanine Adkisson,
+      Johannes Westlund, Hidehiko Masuhara
     %p Programming Research Group, Tokyo Institute of Technology
     %p
       %code
@@ -123,7 +125,9 @@
     .vs3>
       .box return codes
 
-  every <span class="dune">&ldquo;general-purpose&rdquo;</span> programming language understands these.
+  %p
+    %span.dune Common language of programs:
+    every <span class="dune">&ldquo;general-purpose&rdquo;</span> programming language understands these.
 
 
 %section(data-transition="fade-in slide-out")
@@ -150,60 +154,60 @@
       or <code>scheme-shell</code>, which apply an existing
       language's semantics to a shell context.
 
-%section
-  %h2 Syntax Design:<br> Pipe-Based Composition
-  %h3 Compose complex pipelines linearly
+-#%section
+-#  %h2 Syntax Design:<br> Pipe-Based Composition
+-#  %h3 Compose complex pipelines linearly
+-#
+-#  %h4 Why not use lisp-like syntax?
+-#
+-#  .block.replacement
+-#    .fragment.current-visible
+-#      = code 'cursorscheme' do
+-#        :plain
+-#          ; user types (▮ = cursor)
+-#          (fan 4 fetch-webpage (file-lines "url-list.txt"))▮
+-#
+-#    .fragment.current-visible
+-#      = code 'cursorscheme' do
+-#        :plain
+-#          ; user backtracks to the front
+-#          ▮(fan 4 fetch-webpage (file-lines "url-list.txt"))
+-#
+-#    .fragment.current-visible
+-#      = code 'cursorscheme' do
+-#        :plain
+-#          ; user types
+-#          (sort (map downcase (map '(html-select ".title") ▮(fan 4 fetch-webpage
+-#                          (file-lines "url-list.txt"))
+-#
+-#    .fragment.last
+-#      = code 'cursorscheme' do
+-#        :plain
+-#          ; user scans to the end and completes parentheses
+-#          (sort (map downcase (map '(html-select ".title") (fan 4 fetch-webpage
+-#                          (file-lines "url-list.txt")))))▮
+-#
+-#  %h4.fragment Lisp-like syntax is not ideal for REPL composition
 
-  %h4 Why not use lisp-like syntax?
-
-  .block.replacement
-    .fragment.current-visible
-      = code 'cursorscheme' do
-        :plain
-          ; user types (▮ = cursor)
-          (fan 4 fetch-webpage (file-lines "url-list.txt"))▮
-
-    .fragment.current-visible
-      = code 'cursorscheme' do
-        :plain
-          ; user backtracks to the front
-          ▮(fan 4 fetch-webpage (file-lines "url-list.txt"))
-
-    .fragment.current-visible
-      = code 'cursorscheme' do
-        :plain
-          ; user types
-          (sort (map downcase (map '(html-select ".title") ▮(fan 4 fetch-webpage
-                          (file-lines "url-list.txt"))
-
-    .fragment.last
-      = code 'cursorscheme' do
-        :plain
-          ; user scans to the end and completes parentheses
-          (sort (map downcase (map '(html-select ".title") (fan 4 fetch-webpage
-                          (file-lines "url-list.txt")))))▮
-
-  %h4.fragment Lisp-like syntax is not ideal for REPL composition
-
-%section
-  %h2 Syntax Design:<br> Pipe-Based Composition
-  %h3 Compose complex pipelines linearly
-
-  .replacement
-    .fragment.current-visible
-      = code 'qsh' do
-        :plain
-          # user types
-          file-lines url-list.txt | fan 4 %fetch-webpage▮
-    .fragment
-      = code 'qsh' do
-        :plain
-          # user continues typing
-          file-lines url-list.txt | fan 4 %fetch-webpage | each [%html-select title]
-            | each %downcase | sort▮
-
-  .space
-  %h4.fragment Design Goal: Can always continue typing to use previous results
+-#%section
+-#  %h2 Syntax Design:<br> Pipe-Based Composition
+-#  %h3 Compose complex pipelines linearly
+-#
+-#  .replacement
+-#    .fragment.current-visible
+-#      = code 'qsh' do
+-#        :plain
+-#          # user types
+-#          file-lines url-list.txt | fan 4 %fetch-webpage▮
+-#    .fragment
+-#      = code 'qsh' do
+-#        :plain
+-#          # user continues typing
+-#          file-lines url-list.txt | fan 4 %fetch-webpage | each [%html-select title]
+-#            | each %downcase | sort▮
+-#
+-#  .space
+-#  %h4.fragment Design Goal: Can always continue typing to use previous results
 
 %section
   %h2 Language Design
@@ -340,134 +344,134 @@
 
 
 
-%section
-  %h2 Language Design: Values
-
-  .vs>
-    %h3 Problem:<br> Everything Is A String
-
-    .box
-      %ul
-        %li Variables can hold strings, lists, or associative arrays, <strong>but</strong>
-        %li Function arguments and pipes can only receive or output strings
-        -#%li Data structures are impossible/inconvenient
-        -#%li Anonymous functions are impossible/inconvenient
-        %li Makes large programs an unreasonable goal
-
-  .vs>
-    %h3 Solution:<br> Introduce values!
-    .box
-      %ul
-        %li
-          <strong>values</strong> can be:
-          string, number, vector, environment,
-          channel, process, function, etc.
-        %li
-          Can be used in variables, function arguments, and
-          <strong>can be passed through pipes</strong>
-        -#%li
-        -#  Channels can handle values, not just bytes
-        -#%li
-        -#  Functions take values as arguments, and output values
-
-  .block
-    %p
-      This is in contrast with projects like <code>es</code> or
-      <code>fish</code>, where pipes can only receive bytes.
-
-%section
-  %h2 Language Design: Call Semantics
-  .block
-    %h4 Problem: Shell functions don't have return values
-    %h4 Solution: Multiple return values using stdout.
-
-  .block(style="margin-top: -2em")
-    .vs>
-      %h3 Processes <code>put</code> values
-      = code 'qsh' do
-        :plain
-          (count-three) = (
-            put 1
-            put 2
-            put 3
-          )
-
-      .space
-      %h4 How should we capture these outputs?
-    .vs.fragment>
-      %h3 Expansion
-      = code 'console?lang=qsh' do
-        :plain
-          ; put 0 (count-three) 4
-
-          -- expands to --
-          ; put 0 1 2 3 4
-
-          => 0; => 1; => 2; => 3; => 4
-
-  .fragment(style="margin-top: -1.5em")
-    Equivalent to shell <code>$(command arg arg)</code>, but without the whitespace issues
-
-
-%section(data-transition="slide-in fade-out")
-  %h2 Language Design: Variable Scope
-  .block
-    .space
-    %h4 Problem: UNIX programs expect dynamic variables
-    %h4 Solution: Support both lexical and dynamic variables
-
-  .block
-    .vs>
-      %h3 Dynamic with <code>$</code>
-      = code 'console?lang=qsh' do
-        :plain
-          ; x = 1
-          ; (f) = (put $x)
-          ; (g) = (x = 2; f)
-          ; g
-          2
-
-    .vs>
-      %h3 Lexical with <code>%</code>
-      = code 'console?lang=qsh' do
-        :plain
-          ; x = 1
-          ; (f) = (put %x)
-          ; (g) = (x = 2; f)
-          ; g
-          1
-
-  Dynamic variables = UNIX environment variables
-
-%section(data-transition="fade-in slide-out")
-  %h2 Language Design: Variable Scope
-  .block
-    .space
-    %h4 Problem: UNIX programs expect dynamic variables
-    %h4 Solution: Support both lexical and dynamic variables
-
-  .block
-    .vs>
-      %h3 Dynamic with <code>$</code>
-      = code 'console?lang=qsh' do
-        :plain
-          ; x = 1
-          ; (f) = ($x = 3)
-          ; (g) = (x = 2; f; put $x)
-          ; g; put $x
-          3 1
-
-    .vs>
-      %h3 Lexical with <code>%</code>
-      = code 'console?lang=qsh' do
-        :plain
-          ; x = 1
-          ; (f) = (%x = 3)
-          ; (g) = (x = 2; f; put $x)
-          ; g; put $x
-          2 3
-
-  Dynamic variables = UNIX environment variables
+-# %section
+-#   %h2 Language Design: Values
+-# 
+-#   .vs>
+-#     %h3 Problem:<br> Everything Is A String
+-# 
+-#     .box
+-#       %ul
+-#         %li Variables can hold strings, lists, or associative arrays, <strong>but</strong>
+-#         %li Function arguments and pipes can only receive or output strings
+-#         -#%li Data structures are impossible/inconvenient
+-#         -#%li Anonymous functions are impossible/inconvenient
+-#         %li Makes large programs an unreasonable goal
+-# 
+-#   .vs>
+-#     %h3 Solution:<br> Introduce values!
+-#     .box
+-#       %ul
+-#         %li
+-#           <strong>values</strong> can be:
+-#           string, number, vector, environment,
+-#           channel, process, function, etc.
+-#         %li
+-#           Can be used in variables, function arguments, and
+-#           <strong>can be passed through pipes</strong>
+-#         -#%li
+-#         -#  Channels can handle values, not just bytes
+-#         -#%li
+-#         -#  Functions take values as arguments, and output values
+-# 
+-#   .block
+-#     %p
+-#       This is in contrast with projects like <code>es</code> or
+-#       <code>fish</code>, where pipes can only receive bytes.
+-# 
+-# %section
+-#   %h2 Language Design: Call Semantics
+-#   .block
+-#     %h4 Problem: Shell functions don't have return values
+-#     %h4 Solution: Multiple return values using stdout.
+-# 
+-#   .block(style="margin-top: -2em")
+-#     .vs>
+-#       %h3 Processes <code>put</code> values
+-#       = code 'qsh' do
+-#         :plain
+-#           (count-three) = (
+-#             put 1
+-#             put 2
+-#             put 3
+-#           )
+-# 
+-#       .space
+-#       %h4 How should we capture these outputs?
+-#     .vs.fragment>
+-#       %h3 Expansion
+-#       = code 'console?lang=qsh' do
+-#         :plain
+-#           ; put 0 (count-three) 4
+-# 
+-#           -- expands to --
+-#           ; put 0 1 2 3 4
+-# 
+-#           => 0; => 1; => 2; => 3; => 4
+-# 
+-#   .fragment(style="margin-top: -1.5em")
+-#     Equivalent to shell <code>$(command arg arg)</code>, but without the whitespace issues
+-# 
+-# 
+-# %section(data-transition="slide-in fade-out")
+-#   %h2 Language Design: Variable Scope
+-#   .block
+-#     .space
+-#     %h4 Problem: UNIX programs expect dynamic variables
+-#     %h4 Solution: Support both lexical and dynamic variables
+-# 
+-#   .block
+-#     .vs>
+-#       %h3 Dynamic with <code>$</code>
+-#       = code 'console?lang=qsh' do
+-#         :plain
+-#           ; x = 1
+-#           ; (f) = (put $x)
+-#           ; (g) = (x = 2; f)
+-#           ; g
+-#           2
+-# 
+-#     .vs>
+-#       %h3 Lexical with <code>%</code>
+-#       = code 'console?lang=qsh' do
+-#         :plain
+-#           ; x = 1
+-#           ; (f) = (put %x)
+-#           ; (g) = (x = 2; f)
+-#           ; g
+-#           1
+-# 
+-#   Dynamic variables = UNIX environment variables
+-# 
+-# %section(data-transition="fade-in slide-out")
+-#   %h2 Language Design: Variable Scope
+-#   .block
+-#     .space
+-#     %h4 Problem: UNIX programs expect dynamic variables
+-#     %h4 Solution: Support both lexical and dynamic variables
+-# 
+-#   .block
+-#     .vs>
+-#       %h3 Dynamic with <code>$</code>
+-#       = code 'console?lang=qsh' do
+-#         :plain
+-#           ; x = 1
+-#           ; (f) = ($x = 3)
+-#           ; (g) = (x = 2; f; put $x)
+-#           ; g; put $x
+-#           3 1
+-# 
+-#     .vs>
+-#       %h3 Lexical with <code>%</code>
+-#       = code 'console?lang=qsh' do
+-#         :plain
+-#           ; x = 1
+-#           ; (f) = (%x = 3)
+-#           ; (g) = (x = 2; f; put $x)
+-#           ; g; put $x
+-#           2 3
+-# 
+-#   Dynamic variables = UNIX environment variables
 
 /%section
 /  %h2 Language Design: Objects
@@ -625,41 +629,41 @@
 /        command |[5>2] command
 /        command |[2>$ERROR_LOG] command
 
+-# %section
+-#   %h2 Concurrency Model
+-# 
+-#   .vs
+-#     %ul
+-#       %li.fragment
+-#         Users can freely spawn
+-#         %strong.dune processes
+-#       %li.fragment
+-#         Processes communicate and coordinate through
+-#         %strong.dune synchronous channels
+-#       %li.fragment
+-#         -#%strong.go-get-it [new]
+-#         Processes
+-#         %strong.dune register
+-#         their open input/output channels at startup, and
+-#         %strong.dune deregister
+-#         them at exit.
+-#       %li.fragment
+-#         -#%strong.go-get-it [new]
+-#         A channel
+-#         %strong.dune closes
+-#         when either its last registered reader or registered writer exits.
+-#         At closing, we
+-#         %strong.dune interrupt
+-#         all blocked processes, as well as any process that attempts to
+-#         reopen the channel.
+-# 
+-#   %h4.fragment (Will explain all this in later slides!)
+
+
+
+
 %section
-  %h2 Concurrency Model
-
-  .vs
-    %ul
-      %li.fragment
-        Users can freely spawn
-        %strong.dune processes
-      %li.fragment
-        Processes communicate and coordinate through
-        %strong.dune synchronous channels
-      %li.fragment
-        -#%strong.go-get-it [new]
-        Processes
-        %strong.dune register
-        their open input/output channels at startup, and
-        %strong.dune deregister
-        them at exit.
-      %li.fragment
-        -#%strong.go-get-it [new]
-        A channel
-        %strong.dune closes
-        when either its last registered reader or registered writer exits.
-        At closing, we
-        %strong.dune interrupt
-        all blocked processes, as well as any process that attempts to
-        reopen the channel.
-
-  %h4.fragment (Will explain all this in later slides!)
-
-
-
-
-%section
-  %h2 Concurrency: Concepts
+  %h2 Concurrency: Intrinsic Operations
 
   .vs>
     %h4 Channels as values
@@ -999,6 +1003,15 @@
 /           ~$ 
 
 
+
+%section
+  %h2 Validation
+
+  %h4 Need to validate:
+  %ul
+    %li.fragment Magritte is appropriate <strong class="dune">for writing large programs</strong>
+    %li.fragment Magritte is appropriate <strong class="dune">for shell scripting</strong>
+    %li.fragment Magritte is appropriate <strong class="dune">as an interactive system shell</strong>
 
 
 
