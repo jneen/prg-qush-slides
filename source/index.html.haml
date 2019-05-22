@@ -33,7 +33,8 @@
       :plain
         #!/bin/bash
 
-        # complicated defaults
+        # complicated defaults!
+
         getc() {
           IFS= read -r -n1 -d '' "$@"
         }
@@ -42,7 +43,8 @@
       :plain
         #!/bin/bash
 
-        # whitespace separation issues
+        # whitespace separation issues!
+
         greeting='hello world'
         count-argv $greeting # => 2
         count-argv 'hello world' # => 1
@@ -63,7 +65,7 @@
 
   .vs3>
     .box
-      %h3 REPL Feel
+      %h3 REPL Feel:
       .block
         Designed for heavy REPL use
 
@@ -132,7 +134,10 @@
 
 %section(data-transition="fade-in slide-out")
   %h2 Main Idea
-  %h3 A language that expands UNIX concepts to language abstractions
+  %h3 A language that expands UNIX concepts to language features
+  -# %h3 UNIXのAPIを表す機能を持つ言語
+  -# %h3 UNIXの機能を拡張で生成された言語
+
 
   .block
     .vs3>
@@ -153,6 +158,15 @@
       This is in contrast to projects like <code>xonsh</code>
       or <code>scheme-shell</code>, which apply an existing
       language's semantics to a shell context.
+
+%section
+  %h2 Validation
+
+  %h4 Need to validate:
+  %ul
+    %li.fragment Magritte is appropriate <strong class="dune">for writing large programs</strong>
+    %li.fragment Magritte is appropriate <strong class="dune">for shell scripting</strong>
+    %li.fragment Magritte is appropriate <strong class="dune">as an interactive system shell</strong>
 
 -#%section
 -#  %h2 Syntax Design:<br> Pipe-Based Composition
@@ -298,6 +312,11 @@
             #            ($page!select description)])
             #   | each [%map %downcase]
             )
+
+        .space
+        %p.emph
+          lambda/lexical variable design is an extension of the system in
+          Es shell (Haar &amp; Rakitzis 1993)
 
       .fragment.current-visible
         .bubble(style="bottom: 35%; right: 15%")
@@ -601,34 +620,6 @@
 
 
 
-/%section
-/  %h2 Language Design: Concurrency
-/  Many things TBD, but the principle is:
-/  %h3 Behave as closely to UNIX processes as possible.
-/  .vs>
-/    = code 'qsh' do
-/      :plain
-/        # spawn
-/        & command $arg $arg > $out < $in
-/
-/        # send
-/        put message > $in
-/
-/        # receive
-/        get message < $out
-/    // vim syntax highlighting gets confused here
-/    // >
-/  .vs>
-/    .block
-/      %ul
-/        %li local environment contains file handles 0~127
-/        %li 0 = stdin, 1 = stdout, 2 = stderr, etc
-/    = code 'qsh' do
-/      :plain
-/        command | command
-/        command |[5>2] command
-/        command |[2>$ERROR_LOG] command
-
 -# %section
 -#   %h2 Concurrency Model
 -# 
@@ -742,10 +733,10 @@
           count-forever (incr $n)
         )
 
-        (take 0) = ()
-        (take ?n) = (
-          put (get)
-          take (decr $n)
+        take = (
+          0 => # return
+          ?n => put (get)
+                take (decr $n)
         )
 
         count-forever 0 | take 10
@@ -848,6 +839,8 @@
 
       -#.space
       -#%h4.fragment This is how it works in bash already!
+
+  %p.cite <em>Inoue, Aotani, and Igarashi [2018]: &ldquo;ContextWorkFlow: A Monadic DSL for Compensable and Interruptible Executions&rdquo;</em>
 
 %section
   %h2 Concurrency: Interruption
@@ -1010,13 +1003,28 @@
   %h4 Need to validate:
   %ul
     %li.fragment Magritte is appropriate <strong class="dune">for writing large programs</strong>
+    %p.fragment(style="text-align: left; text-indent: 2em")
+      %strong.pink-merengue problem:
+      Lots of concurrent code, which is difficult to debug
+    %p.fragment(style="text-align: left; text-indent: 2em")
+      %strong.sandy BUT:
+      Have enabled many programs not possible in bash
     %li.fragment Magritte is appropriate <strong class="dune">for shell scripting</strong>
+    %p.fragment(style="text-align: left; text-indent: 2em")
+      %strong.pink-merengue problem:
+      UNIX integration is more difficult than we first expected
     %li.fragment Magritte is appropriate <strong class="dune">as an interactive system shell</strong>
+    %p.fragment(style="text-align: left; text-indent: 2em")
+      %strong.pink-merengue problem:
+      Also needs UNIX integration
+    %p.fragment(style="text-align: left; text-indent: 2em")
+      %strong.sandy BUT:
+      Have preserved the shell composition strategy and repl interaction
 
 
 
-%section
-  %h2 Implementation Progress
+-#%section
+-#  %h2 Implementation Progress
 
 %section
   %h2 Implementation Progress
@@ -1037,11 +1045,13 @@
       -#   %strong.pink-merengue [future-work]
       -#   write some example programs, develop programming patterns and styles (Johannes)
       %li
-        %strong.pink-merengue [future-work: HARD]
-        write the UNIX integration layer
+        %strong.pink-merengue [TODO]
+        write the <strong class="chilly">UNIX integration layer</strong><br>
+        %small (with the help of Oleks Shturmov at the University of Olso)
       %li
-        %strong.pink-merengue [future-work (later)]
-        design a VM, bootstrap with RPython
+        %strong.pink-merengue [TODO: in progress]
+        design a <strong class="chilly">Step Interpreter</strong><br>
+        to allow debugging of concurrent code
       %li.fragment
         %strong.go-get-it DEMO
 
