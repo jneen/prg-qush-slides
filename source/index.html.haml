@@ -1,16 +1,21 @@
+-# FOCUS ON NOVELTY: pipe-based programming + channel values
+-# *list* novel contributions at a high level
+-# only touch on a few topics
+
 %section#intro
   %h1 Magritte
   -# %p A UNIX Shell Suitable For Large Programs / A pipe-oriented language
-  %p A Shell-like Model for General Purpose Programming
+  -# %p A Shell-like Model for General Purpose Programming
+  %p A Language for Pipe-based Programming
   .tagline
     %p
-      .bigger Jeanine Adkisson,
-      Johannes Westlund, Hidehiko Masuhara
+      .bigger Jeanine Adkisson
+      Advisor: Hidehiko Masuhara
     %p Programming Research Group, Tokyo Institute of Technology
     %p
       %code
         slides:
-        %a(href="https://jneen.github.io/prg-qush-slides") https://jneen.github.io/prg-qush-slides
+        %a(href="https://jneen.github.io/prg-magritte-slides") https://jneen.github.io/prg-magritte-slides
 
     %p
       %code
@@ -28,26 +33,26 @@
 %section<
   %h2 Problem: Shells Are Bad.
   %h2 But Everyone Uses Them.
-  .vs>
-    = code 'shell' do
-      :plain
-        #!/bin/bash
+  -#.vs>
+  -#  = code 'shell' do
+  -#    :plain
+  -#      #!/bin/bash
 
-        # complicated defaults!
+  -#      # complicated defaults!
 
-        getc() {
-          IFS= read -r -n1 -d '' "$@"
-        }
-  .vs>
-    = code 'shell' do
-      :plain
-        #!/bin/bash
+  -#      getc() {
+  -#        IFS= read -r -n1 -d '' "$@"
+  -#      }
+  -#.vs>
+  -#  = code 'shell' do
+  -#    :plain
+  -#      #!/bin/bash
 
-        # whitespace separation issues!
+  -#      # whitespace separation issues!
 
-        greeting='hello world'
-        count-argv $greeting # => 2
-        count-argv 'hello world' # => 1
+  -#      greeting='hello world'
+  -#      count-argv $greeting # => 2
+  -#      count-argv 'hello world' # => 1
 
 
 %section
@@ -61,7 +66,7 @@
     .box
       %h3 OS Fluency:
       .block
-        &ldquo;Feels&rdquo; directly connected to the OS
+        &ldquo;Feels&rdquo; directly connected to OS
 
   .vs3>
     .box
@@ -77,7 +82,7 @@
     .box
       %h3 OS Fluency:
       .block
-        &ldquo;Feels&rdquo; directly connected to the OS
+        &ldquo;Feels&rdquo; directly connected to OS
 
   .vs3>
     .box
@@ -92,6 +97,44 @@
         A usable general-purpose language
 
   %p Should be able to write large programs!
+
+%section
+  %h2 Other Attempts (partial overview)
+
+  %ul
+    %li.fragment
+      %strong.go-get-it Scheme-shell
+      \/
+      %strong.go-get-it xonsh
+
+      %p.sublist - Embed a shell into another language!
+      %p.sublist - Two worlds
+
+
+    %li.fragment
+      %strong.go-get-it Rc
+      \/
+      %strong.go-get-it Es
+
+      %p.sublist - Improve the shell model!
+      %p.sublist - Missing data structure support
+
+    %li.fragment
+      %strong.go-get-it Windows Powershell
+
+      %p.sublist - Most of the advantage comes from .NET integration
+      %p.sublist - Object-oriented approach to pipes
+      %p.sublist - Focus on OO, integration role over general-purpose
+      %p.sublist - Verbosity impedes interactive usability
+
+    %li.fragment
+      %strong.go-get-it Elvish
+
+      %p.sublist - Developed concurrently with Magritte
+      %p.sublist - Value pipes, output/return unification
+      %p.sublist - Shell-oriented data structures
+      %p.sublist - No channel values
+
 
 // %section
 //   %h2 Design Philosophy
@@ -113,60 +156,112 @@
     What Makes a Shell Feel <span class="dune">&ldquo;Fluent&rdquo;</span>?
   .bigger
     %strong.sandy Core language concepts directly map to OS APIs
-  .block
-    .vs3>
-      .box environments
-    .vs3>
-      .box argv
-    .vs3>
-      .box processes
-    .vs3>
-      .box pipes, files, stdio
-    .vs3>
-      .box commands
-    .vs3>
-      .box return codes
+
+  .vs>
+    .bigger
+      %div environments
+      %div argv
+      %div processes
+      %div pipes, files, stdio
+      %div commands
+      %div return codes
+
+  -# .block
+  -#   .vs3>
+  -#     .box environments
+  -#   .vs3>
+  -#     .box argv
+  -#   .vs3>
+  -#     .box processes
+  -#   .vs3>
+  -#     .box pipes, files, stdio
+  -#   .vs3>
+  -#     .box commands
+  -#   .vs3>
+  -#     .box return codes
 
   %p
     %span.dune Common language of programs:
     every <span class="dune">&ldquo;general-purpose&rdquo;</span> programming language understands these.
 
 
+-# %section(data-transition="fade-in slide-out")
+-#   %h2 Design Strategy
+-#   %h3 Use only features that are derived from OS APIs
+-# 
+-#   -# use a table
+-# 
+-#   .block
+-#     .vs3>
+-#       .box environments:<br>prototype objects!
+-#     .vs3>
+-#       .box argv:<br>vectors (nestable!)
+-#     .vs3>
+-#       .box processes:<br>threads!
+-#     .vs3>
+-#       .box pipes, files, stdio:<br>channels!
+-#     .vs3>
+-#       .box commands:<br>functions (w/closure!)
+-#     .vs3>
+-#       .box return codes:<br>error handling!
+-# 
+-#   -#.block
+-#   -#  %p
+-#   -#    This is in contrast to projects like <code>xonsh</code>
+-#   -#    or <code>scheme-shell</code>, which apply an existing
+-#   -#    language's semantics to a shell context.
+
 %section(data-transition="fade-in slide-out")
-  %h2 Main Idea
-  %h3 A language that expands UNIX concepts to language features
-  -# %h3 UNIXのAPIを表す機能を持つ言語
-  -# %h3 UNIXの機能を拡張で生成された言語
+  %h2 Design Strategy
+  %h3 Use only features that are derived from OS APIs
 
+  .vs>
+    .bubble(style="right: 48%; top: 60%; font-size: 200%; font-weight: bold") &rarr;
+    .bigger
+      %div environments
+      %div argv
+      %div processes
+      %div pipes, files, stdio
+      %div commands
+      %div return codes
 
-  .block
-    .vs3>
-      .box environments:<br>prototype objects!
-    .vs3>
-      .box argv:<br>vectors (nestable!)
-    .vs3>
-      .box processes:<br>threads!
-    .vs3>
-      .box pipes, files, stdio:<br>channels!
-    .vs3>
-      .box commands:<br>functions (w/closure!)
-    .vs3>
-      .box return codes:<br>error handling!
+  .vs.go-get-it>
+    .bigger.right
+      %div prototype objects
+      %div vectors (nestable!)
+      %div threads!
+      %div channels!
+      %div functions (w/closure!)
+      %div error handling!
 
-  .block
-    %p
-      This is in contrast to projects like <code>xonsh</code>
-      or <code>scheme-shell</code>, which apply an existing
-      language's semantics to a shell context.
+  %p
+    %span.dune Keep the semantics close to the shell!
 
 %section
   %h2 Validation
 
   %h4 Need to validate:
   %ul
-    %li.fragment Magritte is appropriate <strong class="dune">for writing large programs</strong>
-    %li.fragment Magritte is appropriate <strong class="dune">for shell scripting</strong>
-    %li.fragment Magritte is appropriate <strong class="dune">as an interactive system shell</strong>
+    %li.fragment
+      %p Magritte is appropriate <strong class="dune">for writing large programs</strong>
+      %p.sublist
+        \- Data structures
+      %p.sublist
+        \- Functional patterns
+      %p.sublist
+        \- Object-oriented patterns
+    %li.fragment
+      %p Magritte is appropriate <strong class="dune">for shell scripting</strong>
+      %p.sublist
+        \- Can integrate unrelated programs
+      %p.sublist
+        \- Does not require modifications
+    %li.fragment
+      %p Magritte is appropriate <strong class="dune">as an interactive system shell</strong>
+      %p.sublist
+        \- Syntax: Linear Composition
+      %p.sublist
+        \- Syntax: One-dimensional code
 
 -#%section
 -#  %h2 Syntax Design:<br> Pipe-Based Composition
@@ -223,12 +318,52 @@
 -#  .space
 -#  %h4.fragment Design Goal: Can always continue typing to use previous results
 
+-# redesign: show key features first
+-# redesign: non-returning of functions more prominent
+
 %section
   %h2 Language Design
-  %h3 Allowing for large programs
+  %h3 Key Features
+
+  %ul
+    %li.fragment
+      %strong.go-get-it Value
+      pipes
+
+    %li.fragment
+      %strong.go-get-it First-class
+      channels (= pipes)
+
+    %li.fragment
+      %strong.go-get-it Streaming
+      functions:
+      %strong.pink-merengue output, not return
+
+    %li.fragment
+      %strong.go-get-it Asynchronous
+      composition:
+      %code ... | ...
+
+    %li.fragment
+      %strong.go-get-it Synchronous
+      composition:
+      %code (...)
+
+    %li.fragment
+      %strong.go-get-it Unifies
+      both types of output:
+      %code put
 
 %section
   %h2 High-level Example
+
+  .block
+    = code 'qsh' do
+      :plain
+        lexical ::= %x              access ::= $obj!slot
+        dynamic ::= $x              vector ::= [ ... ]
+        binder ::= ?x               lambda ::= ( ... => ... )
+        bare ::= x                  funcdef ::= (f ...) = ...
 
   .block
     .replacement
@@ -237,297 +372,101 @@
           :plain
             # given a filename that contains a list of urls,
             # return all the titles and descriptions.
-            (get-titles-and-descriptions ?f) = (
+            (get-titles-and-descriptions ?f) =
               file-lines $f
                 | fan $threads %get-webpage
                 | each (?page =>
                     put [($page!select title)
                          ($page!select description)])
                 | each [%map %downcase]
-            )
 
-      .fragment.current-visible
-        = code 'qsh' do
-          :plain
-            # given a filename that contains a list of urls,
-            # return all the titles and descriptions.
-            (get-titles-and-descriptions ?f) = (
-            # file-lines $f
-            #   | fan $threads %get-webpage
-            #   | each (?page =>
-            #       put [($page!select title)
-            #            ($page!select description)])
-            #   | each [%map %downcase]
-            )
+      -#.fragment.current-visible
+      -#  .bubble(style="top: 30%; right: 2%")
+      -#    %p
+      -#      each line is <strong>output</strong>
+      -#      as a separate string
+      -#  = code 'qsh' do
+      -#    :plain
+      -#      # given a filename that contains a list of urls,
+      -#      # return all the titles and descriptions.
+      -#      (get-titles-and-descriptions ?f) =
+      -#        file-lines $f
+      -#          | fan $threads %get-webpage
+      -#          | each (?page =>
+      -#              put [($page!select title)
+      -#                   ($page!select description)])
+      -#          | each [%map %downcase]
 
-      .fragment.current-visible
-        .bubble(style="top: 25%; right: 5%")
-          %p
-            each line is <strong>output</strong>
-            as a separate string
-        = code 'qsh' do
-          :plain
-            # given a filename that contains a list of urls,
-            # return all the titles and descriptions.
-            (get-titles-and-descriptions ?f) = (
-              file-lines $f
-            #   | fan $threads %get-webpage
-            #   | each (?page =>
-            #       put [($page!select title)
-            #            ($page!select description)])
-            #   | each [%map %downcase]
-            )
+      -#.fragment.current-visible
+      -#  .bubble(style="top: 35%; right: 15%")
+      -#    %p
+      -#      concurrent processing with a<br>
+      -#      function (passed by value)
+      -#  = code 'qsh' do
+      -#    :plain
+      -#      # given a filename that contains a list of urls,
+      -#      # return all the titles and descriptions.
+      -#      (get-titles-and-descriptions ?f) =
+      -#        file-lines $f
+      -#          | fan $threads %get-webpage
+      -#          | each (?page =>
+      -#              put [($page!select title)
+      -#                   ($page!select description)])
+      -#          | each [%map %downcase]
 
-      .fragment.current-visible
-        .bubble(style="top: 30%; right: 15%")
-          %p
-            concurrent processing with a<br>
-            function (passed by value)
-        = code 'qsh' do
-          :plain
-            # given a filename that contains a list of urls,
-            # return all the titles and descriptions.
-            (get-titles-and-descriptions ?f) = (
-              file-lines $f
-                | fan $threads %get-webpage
-            #   | each (?page =>
-            #       put [($page!select title)
-            #            ($page!select description)])
-            #   | each [%map %downcase]
-            )
+      -#.fragment.current-visible
+      -#  .bubble(style="top: 37%; right: 7%")
+      -#    %p
+      -#      call a lambda function on every input
+      -#  = code 'qsh' do
+      -#    :plain
+      -#      # given a filename that contains a list of urls,
+      -#      # return all the titles and descriptions.
+      -#      (get-titles-and-descriptions ?f) =
+      -#        file-lines $f
+      -#          | fan $threads %get-webpage
+      -#          | each (?page =>
+      -#              put [($page!select title)
+      -#                   ($page!select description)])
+      -#          | each [%map %downcase]
 
-      .fragment.current-visible
-        .bubble(style="top: 43%; right: 15%")
-          %p
-            call a lambda function on every input
-        = code 'qsh' do
-          :plain
-            # given a filename that contains a list of urls,
-            # return all the titles and descriptions.
-            (get-titles-and-descriptions ?f) = (
-              file-lines $f
-                | fan $threads %get-webpage
-                | each (?page =>
-            #       put [($page!select title)
-            #            ($page!select description)])
-            #   | each [%map %downcase]
-            )
+      -#.fragment.current-visible
+      -#  .bubble(style="bottom: 35%; right: 10%")
+      -#    %p
+      -#      parentheses <strong>collect</strong> the output
 
-        .space
-        %p.emph
-          lambda/lexical variable design is an extension of the system in
-          Es shell (Haar &amp; Rakitzis 1993)
+      -#  .bubble(style="bottom: -3%; right: 9%")
+      -#    %p
+      -#      unquoted names are strings (&ldquo;barewords&rdquo;)
+      -#  = code 'qsh' do
+      -#    :plain
+      -#      # given a filename that contains a list of urls,
+      -#      # return all the titles and descriptions.
+      -#      (get-titles-and-descriptions ?f) =
+      -#        file-lines $f
+      -#          | fan $threads %get-webpage
+      -#          | each (?page =>
+      -#              put [($page!select title)
+      -#                   ($page!select description)])
+      -#          | each [%map %downcase]
 
-      .fragment.current-visible
-        .bubble(style="bottom: 35%; right: 15%")
-          %p
-            parentheses <strong>collect</strong> the output
+      -#.fragment
+      -#  .bubble(style="bottom: 10%; right: 10%")
+      -#    %p
+      -#      a vector is <strong>callable</strong><br>
+      -#      as a curried function
 
-        .bubble(style="bottom: 5%; right: 15%")
-          %p
-            unquoted names are strings (&ldquo;barewords&rdquo;)
-        = code 'qsh' do
-          :plain
-            # given a filename that contains a list of urls,
-            # return all the titles and descriptions.
-            (get-titles-and-descriptions ?f) = (
-              file-lines $f
-                | fan $threads %get-webpage
-                | each (?page =>
-                    put [($page!select title)
-                         ($page!select description)])
-            #   | each [%map %downcase]
-            )
-
-      .fragment
-        .bubble(style="bottom: 15%; right: 15%")
-          %p
-            a vector is <strong>callable</strong><br>
-            as a curried function
-
-        = code 'qsh' do
-          :plain
-            # given a filename that contains a list of urls,
-            # return all the titles and descriptions.
-            (get-titles-and-descriptions ?f) = (
-              file-lines $f
-                | fan $threads %get-webpage
-                | each (?page =>
-                    put [($page!select title)
-                         ($page!select description)])
-                | each [%map %downcase]
-            )
-  %p.fragment
-    This kind of pipeline would be impossible in shell! ...but the
-    composition strategy is exactly the same
-
-
-
--# %section
--#   %h2 Language Design: Values
--# 
--#   .vs>
--#     %h3 Problem:<br> Everything Is A String
--# 
--#     .box
--#       %ul
--#         %li Variables can hold strings, lists, or associative arrays, <strong>but</strong>
--#         %li Function arguments and pipes can only receive or output strings
--#         -#%li Data structures are impossible/inconvenient
--#         -#%li Anonymous functions are impossible/inconvenient
--#         %li Makes large programs an unreasonable goal
--# 
--#   .vs>
--#     %h3 Solution:<br> Introduce values!
--#     .box
--#       %ul
--#         %li
--#           <strong>values</strong> can be:
--#           string, number, vector, environment,
--#           channel, process, function, etc.
--#         %li
--#           Can be used in variables, function arguments, and
--#           <strong>can be passed through pipes</strong>
--#         -#%li
--#         -#  Channels can handle values, not just bytes
--#         -#%li
--#         -#  Functions take values as arguments, and output values
--# 
--#   .block
--#     %p
--#       This is in contrast with projects like <code>es</code> or
--#       <code>fish</code>, where pipes can only receive bytes.
--# 
--# %section
--#   %h2 Language Design: Call Semantics
--#   .block
--#     %h4 Problem: Shell functions don't have return values
--#     %h4 Solution: Multiple return values using stdout.
--# 
--#   .block(style="margin-top: -2em")
--#     .vs>
--#       %h3 Processes <code>put</code> values
--#       = code 'qsh' do
--#         :plain
--#           (count-three) = (
--#             put 1
--#             put 2
--#             put 3
--#           )
--# 
--#       .space
--#       %h4 How should we capture these outputs?
--#     .vs.fragment>
--#       %h3 Expansion
--#       = code 'console?lang=qsh' do
--#         :plain
--#           ; put 0 (count-three) 4
--# 
--#           -- expands to --
--#           ; put 0 1 2 3 4
--# 
--#           => 0; => 1; => 2; => 3; => 4
--# 
--#   .fragment(style="margin-top: -1.5em")
--#     Equivalent to shell <code>$(command arg arg)</code>, but without the whitespace issues
--# 
--# 
--# %section(data-transition="slide-in fade-out")
--#   %h2 Language Design: Variable Scope
--#   .block
--#     .space
--#     %h4 Problem: UNIX programs expect dynamic variables
--#     %h4 Solution: Support both lexical and dynamic variables
--# 
--#   .block
--#     .vs>
--#       %h3 Dynamic with <code>$</code>
--#       = code 'console?lang=qsh' do
--#         :plain
--#           ; x = 1
--#           ; (f) = (put $x)
--#           ; (g) = (x = 2; f)
--#           ; g
--#           2
--# 
--#     .vs>
--#       %h3 Lexical with <code>%</code>
--#       = code 'console?lang=qsh' do
--#         :plain
--#           ; x = 1
--#           ; (f) = (put %x)
--#           ; (g) = (x = 2; f)
--#           ; g
--#           1
--# 
--#   Dynamic variables = UNIX environment variables
--# 
--# %section(data-transition="fade-in slide-out")
--#   %h2 Language Design: Variable Scope
--#   .block
--#     .space
--#     %h4 Problem: UNIX programs expect dynamic variables
--#     %h4 Solution: Support both lexical and dynamic variables
--# 
--#   .block
--#     .vs>
--#       %h3 Dynamic with <code>$</code>
--#       = code 'console?lang=qsh' do
--#         :plain
--#           ; x = 1
--#           ; (f) = ($x = 3)
--#           ; (g) = (x = 2; f; put $x)
--#           ; g; put $x
--#           3 1
--# 
--#     .vs>
--#       %h3 Lexical with <code>%</code>
--#       = code 'console?lang=qsh' do
--#         :plain
--#           ; x = 1
--#           ; (f) = (%x = 3)
--#           ; (g) = (x = 2; f; put $x)
--#           ; g; put $x
--#           2 3
--# 
--#   Dynamic variables = UNIX environment variables
-
-/%section
-/  %h2 Language Design: Objects
-/
-/  .block
-/    .vs>
-/      %h3 Instantiation
-/      = code 'qsh' do
-/        :plain
-/          my-env = {
-/            # regular members
-/            x = 1
-/
-/            # functions
-/            (set-x ?value) = (
-/              # $self set dynamically
-/              # as in javascript
-/              $self!x = %value
-/            )
-/          }
-/
-/    .vs>
-/      %h3 Usage
-/      = code 'qsh' do
-/        :plain
-/          # regular members
-/          $my-env!x
-/
-/          # functions
-/          $my-env!my-function 23
-/
-/          +$my-env (
-/            my-function $x
-/          )
-
-
-
+      -#  = code 'qsh' do
+      -#    :plain
+      -#      # given a filename that contains a list of urls,
+      -#      # return all the titles and descriptions.
+      -#      (get-titles-and-descriptions ?f) =
+      -#        file-lines $f
+      -#          | fan $threads %get-webpage
+      -#          | each (?page =>
+      -#              put [($page!select title)
+      -#                   ($page!select description)])
+      -#          | each [%map %downcase]
 
 /%section
 /  %h2 Language Design: Compatibility
@@ -552,109 +491,8 @@
 /  Bash cannot currently do this.
 
 
-/%section
-/  %h2 Language Design: Error Handling
-/  %h3 Default Behavior
-/
-/  An &ldquo;error&rdquo; includes:
-/
-/  .block
-/    %ul
-/      %li Assertion error (type error or explicit crash)
-/      %li External crash signal (SIGINT, etc)
-/      %li A child process exits with nonzero code
-/      %li A blocked channel closes
-
-
-/%section
-/  %h2 Language Design: Error Handling
-/  %h3 Default Behavior
-/  When an error happens:
-/  .block
-/    %ul
-/      %li All child processes are sent SIGINT (or echo signal)
-/      %li Compensations are run in reverse order (more later)
-/      %li All channels are closed
-/      %li Exit with an error code (default 1)
-
-/ %section
-/   %h2 Language Design: Error Handling
-/   %h3 Plain Recovery (Continuing)
-/ 
-/   .block
-/     = code 'qsh' do
-/       :plain
-/         command || command-if-error
-/         command && command-if-no-error
-/         command && command-if-no-error !! command-if-error
-/ 
-/   .block Internal errors (non-zero exits) in the original command are &ldquo;rescued&rdquo; (ignored)
-/ 
-/   .block <code class="scarletred2">TODO:</code> Syntax for targetting error types
-/ 
-/ 
-/ %section
-/   %h2 Language Design: Error Handling
-/   %h3 Compensation
-/ 
-/   = code 'qsh' do
-/     :plain
-/       touch /tmp/lock %% rm -f /tmp/lock # compensate an error
-/ 
-/       %x = command %% reset # sets $COMP_REF and $COMP_PREV
-/ 
-/       checkpoint # clears the current compensation stack
-/ 
-/   .space
-/   = code 'qsh' do
-/     :plain
-/       touch /tmp/lock %%! rm -f /tmp/lock # run on error or at checkpoint
-/   %br
-/ 
-/   .block <code class="scarletred2">TODO:</code> Compensation boundaries
-/   /Options being considered for compensation boundaries:
-/   /.block
-/   /  %ul
-/   /    %li Only at the procedure level
-/   /    %li Controlled by a special environment variable
-
-
-
--# %section
--#   %h2 Concurrency Model
--# 
--#   .vs
--#     %ul
--#       %li.fragment
--#         Users can freely spawn
--#         %strong.dune processes
--#       %li.fragment
--#         Processes communicate and coordinate through
--#         %strong.dune synchronous channels
--#       %li.fragment
--#         -#%strong.go-get-it [new]
--#         Processes
--#         %strong.dune register
--#         their open input/output channels at startup, and
--#         %strong.dune deregister
--#         them at exit.
--#       %li.fragment
--#         -#%strong.go-get-it [new]
--#         A channel
--#         %strong.dune closes
--#         when either its last registered reader or registered writer exits.
--#         At closing, we
--#         %strong.dune interrupt
--#         all blocked processes, as well as any process that attempts to
--#         reopen the channel.
--# 
--#   %h4.fragment (Will explain all this in later slides!)
-
-
-
-
 %section
-  %h2 Concurrency: Intrinsic Operations
+  %h2 Concurrency Primitives
 
   .vs>
     %h4 Channels as values
@@ -674,8 +512,8 @@
     %h4 Spawning: Run in the background
     = code 'qsh' do
       :plain
-        & some-function arg arg
-        & some-function >$out <$in
+        & f arg arg
+        & f >$out <$in
         & foo | bar | baz
     -#>
 
@@ -696,198 +534,246 @@
 -# vimmmm
 -# >
 
--#%section
--#  %h2 Concurrency: Concepts
--#
--#  %p
--#    Channels are <strong>synchronous</strong>:
--#  %ul
--#    %li reader and writer must both be present to make a communication.
--#    %li Writes will <strong>block</strong> until the channel is read.
--#
--#  .vs>
--#    %h4 Block on read
--#    = code 'qsh' do
--#      :plain
--#        (sleep 10; put 1) | (get; put 2)
--#
--#
--#  .vs>
--#    %h4 Block on write
--#    = code 'qsh' do
--#      :plain
--#        put 1 | (sleep 10; get)
--#
--#  %h4.fragment This is different than bash!
-
 %section
-  %h2 Concurrency: Interruption
+  %h2
+    Concurrency: Interruption
 
-  %h3 What should the behavior of this code be?
+  %h3 Why is Interruption Necessary?
 
   .vs>
+    %h4 Pattern: Full Iteration
     = code 'qsh' do
       :plain
-        (count-forever ?n) = (
-          put $n
-          count-forever (incr $n)
-        )
+        file-lines $f
+          | each (=> ...)
+  .vs>
+    %h4 Implementation: Infinite Loops
+    = code 'qsh' do
+      :plain
+        (each ?fn) =
+          loop (=> fn (get))
 
-        take = (
-          0 => # return
-          ?n => put (get)
-                take (decr $n)
-        )
+  %center.fragment
+    %strong.go-get-it Problem:
+    How does
+    %code.sandy each
+    know when to stop?
 
-        count-forever 0 | take 10
-
-  .replacement.vs>
-    .fragment.current-visible
+  .fragment
+    .vs>
+      %h4 Pattern: Partial Iteration
       = code 'qsh' do
         :plain
-          => 0; => 1; => 2; => ...; => 9
+          file-lines $f
+            | take 10
+    .vs>
+      %h4 Implementation: Simple Return
+      = code 'qsh' do
+        :plain
+          (take ?n) = gt 0 %n &&
+            (get; take (decr %n))
 
-          # but what happens to the process
-          # running `count-forever`...?
-
-    .block.fragment
-      %h4 Naive Approach: Nothing!
-
-      %ul
-        %li
-          %span.code count-forever
-          tries to write 10 to the output, blocks
-        %li
-          %span.code take
-          returns after 9, never reads
-        %li
-          %span.code count-forever
-          gets garbage-collected later
-
-    .fragment.box
-      %h4 This works!
-      %p ...as long as there are no cleanup actions
-
-%section(data-transition="slide-in fade-out")
-  %h2 Concurrency: Interruption
-
-  %h3 But what if there are cleanup actions?
-
-  .vs>
-    = code 'qsh' do
-      :plain
-        (file-lines ?fname) = (
-          file = (open-file $fname
-            %%! close-file $fname)
-          ...
-        )
+    %center.fragment
+      %strong.go-get-it Problem:
+      How does
+      %code.sandy file-lines
+      know when to close the file?
 
 
-        file-lines /tmp/huge-file
-          | take 10
-
-  .vs.nfragment>
-    %h4
-      With the naive approach, the file will remain open until gc!
-
-    .space
-    %p.left Processes expect to be cleaned up when the processes they're communicating with hang up.
-
-    .space
-    %p.left They expect an <strong>interrupt</strong> signal of some kind.
-
-  %p.cite <em>Inoue, Aotani, and Igarashi [2018]: &ldquo;ContextWorkFlow: A Monadic DSL for Compensable and Interruptible Executions&rdquo;</em>
-
-%section(data-transition="fade-in slide-out")
-  %h2 Concurrency: Interruption
-
-  %h3 Idea: channel-closing semantics
-
-  .vs>
-    = code 'qsh' do
-      :plain
-        (file-lines ?fname) = (
-          file = (open-file $fname
-            %%! close-file $fname)
-          ...
-        )
 
 
-        file-lines /tmp/huge-file
-          | take 10
 
-  .vs>
-    %ul
-      %li.fragment
-        When
-        %span.code take 10
-        returns, it
-        %strong closes
-        the channel.
 
-      %li.fragment
-        The
-        %span.code file-lines
-        process is either blocked on the channel or tries to write later
-
-      %li.fragment
-        Either situation results in the
-        %span.code file-lines
-        process being
-        %strong< interrupted
-        , and having its cleanup actions run.
-
-      -#.space
-      -#%h4.fragment This is how it works in bash already!
-
-  %p.cite <em>Inoue, Aotani, and Igarashi [2018]: &ldquo;ContextWorkFlow: A Monadic DSL for Compensable and Interruptible Executions&rdquo;</em>
+-# %section
+-#   %h2 Concurrency: Interruption
+-# 
+-#   %h3 What should the behavior of this code be?
+-# 
+-#   .vs>
+-#     = code 'qsh' do
+-#       :plain
+-#         (count-forever ?n) = (
+-#           put $n
+-#           count-forever (incr $n)
+-#         )
+-# 
+-#         take = (
+-#           0 => # return
+-#           ?n => put (get)
+-#                 take (decr $n)
+-#         )
+-# 
+-#         count-forever 0 | take 10
+-# 
+-#   .replacement.vs>
+-#     .fragment.current-visible
+-#       = code 'qsh' do
+-#         :plain
+-#           => 0; => 1; => 2; => ...; => 9
+-# 
+-#           # but what happens to the process
+-#           # running `count-forever`...?
+-# 
+-#     .block.fragment
+-#       %h4 Naive Approach: Nothing!
+-# 
+-#       %ul
+-#         %li
+-#           %span.code count-forever
+-#           tries to write 10 to the output, blocks
+-#         %li
+-#           %span.code take
+-#           returns after 9, never reads
+-#         %li
+-#           %span.code count-forever
+-#           gets garbage-collected later
+-# 
+-#     .fragment.box
+-#       %h4 This works!
+-#       %p ...as long as there are no cleanup actions
+-# 
+-# %section(data-transition="slide-in fade-out")
+-#   %h2 Concurrency: Interruption
+-# 
+-#   %h3 But what if there are cleanup actions?
+-# 
+-#   .vs>
+-#     = code 'qsh' do
+-#       :plain
+-#         (file-lines ?fname) = (
+-#           file = (open-file $fname
+-#             %%! close-file $fname)
+-#           ...
+-#         )
+-# 
+-# 
+-#         file-lines /tmp/huge-file
+-#           | take 10
+-# 
+-#   .vs.nfragment>
+-#     %h4
+-#       With the naive approach, the file will remain open until gc!
+-# 
+-#     .space
+-#     %p.left Processes expect to be cleaned up when the processes they're communicating with hang up.
+-# 
+-#     .space
+-#     %p.left They expect an <strong>interrupt</strong> signal of some kind.
+-# 
+-#   %p.cite <em>Inoue, Aotani, and Igarashi [2018]: &ldquo;ContextWorkFlow: A Monadic DSL for Compensable and Interruptible Executions&rdquo;</em>
+-# 
+-# %section(data-transition="fade-in slide-out")
+-#   %h2 Concurrency: Interruption
+-# 
+-#   %h3 Idea: channel-closing semantics
+-# 
+-#   .vs>
+-#     = code 'qsh' do
+-#       :plain
+-#         (file-lines ?fname) = (
+-#           file = (open-file $fname
+-#             %%! close-file $fname)
+-#           ...
+-#         )
+-# 
+-# 
+-#         file-lines /tmp/huge-file
+-#           | take 10
+-# 
+-#   .vs>
+-#     %ul
+-#       %li.fragment
+-#         When
+-#         %span.code take 10
+-#         returns, it
+-#         %strong closes
+-#         the channel.
+-# 
+-#       %li.fragment
+-#         The
+-#         %span.code file-lines
+-#         process is either blocked on the channel or tries to write later
+-# 
+-#       %li.fragment
+-#         Either situation results in the
+-#         %span.code file-lines
+-#         process being
+-#         %strong< interrupted
+-#         , and having its cleanup actions run.
+-# 
+-#       -#.space
+-#       -#%h4.fragment This is how it works in bash already!
+-# 
+-#   %p.cite <em>Inoue, Aotani, and Igarashi [2018]: &ldquo;ContextWorkFlow: A Monadic DSL for Compensable and Interruptible Executions&rdquo;</em>
+-# 
+-# %section
+-#   %h2 Concurrency: Interruption
+-# 
+-#   %h3 Multiple Readers/Writers
+-# 
+-#   .block
+-#     <strong>BUT: </strong>
+-#     Since spawned processes inherit inputs and outputs,<br>
+-#     it will be common to have <strong>multiple readers and writers</strong><br>
+-#     interacting with a channel at the same time.
+-# 
+-#   .block.fragment
+-#     %p
+-#       %strong If we close channels when a process exits, how should this code behave?
+-# 
+-#     = code 'qsh' do
+-#       :plain
+-#         put one two three four five | (& take 2; & take 10) | take 5
+-# 
+-#   -#=> 0 1 3 2 4
+-# 
+-#   .space
+-#   %h4.fragment We must leave channels open if they're still in use
 
 %section
   %h2 Concurrency: Interruption
 
-  %h3 Multiple Readers/Writers
-
-  .block
-    <strong>BUT: </strong>
-    Since spawned processes inherit inputs and outputs,<br>
-    it will be common to have <strong>multiple readers and writers</strong><br>
-    interacting with a channel at the same time.
-
-  .block.fragment
-    %p
-      %strong If we close channels when a process exits, how should this code behave?
-
-    = code 'qsh' do
-      :plain
-        (drain) = (put (get); drain)
-
-        put one two three four five | (& take 2; & take 10) | take 5
-
-  -#=> 0 1 3 2 4
-
-  .space
-  %h4.fragment We must leave channels open if they're still in use
-
-%section
-  %h2 Concurrency: Interruption
-
-  %h3 Idea: Interrupt a process when it's probably blocked forever
-
-  %h4.pink-merengue &ldquo;The last one to leave has to turn off the lights&rdquo;
-
-  .space
+  %h3 Idea: Probably blocked forever &rarr; Interrupt!
 
   %center
-    close a channel when:<br>
-    %strong.bigger
-      The last reader exits
-    %br/
+    %img{src: image_data('channel.png')}
 
-    \~ or ~
-    %br/
+%section
+  %h2 Concurrency: Interruption
 
-    %strong.bigger
-      The last writer exits
+  %h3 When to close a channel?
+
+  .vs>
+    %strong.go-get-it
+      when the last reader exits
+
+    %p
+      No more writes possible &rarr;
+      %strong.pink-merengue close!
+
+  .vs>
+    %strong.go-get-it
+      when the last writer exits
+
+    %p
+      No more reads possible &rarr;
+      %strong.pink-merengue close!
+
+  %h3 When to interrupt a process?
+
+  .vs>
+    %strong.go-get-it Currently waiting channel closes:
+    %p
+      Probably blocked forever &rarr;
+      %strong.pink-merengue interrupt!
+  .vs>
+    %strong.go-get-it Try to read/write a closed channel:
+    %p
+      Probably blocked forever &rarr;
+      %strong.pink-merengue interrupt!
+
+  .space
+  %h4.chilly &ldquo;The last one to leave has to turn off the lights&rdquo;
 
 -#%section
 -#  %h2 Concurrency: Interruption
@@ -995,6 +881,86 @@
 /           demo time!
 /           ~$ 
 
+-# Size of code (SLOC or similar)
+%section
+  %h2 Implementation
+  %p
+    %code
+      code:
+      %a(href="https://github.com/prg-titech/magritte" style="text-decoration: none") https://github.com/prg-titech/magritte
+
+  %h3 Stage 1: Magritte-DSL
+  .block
+    .vs
+      = code 'ruby' do
+        :plain
+          s { put 1; put 2 }
+            .p { put(get + get) }
+            .p { put(get * 2) }
+            .call
+
+  .block
+    %ul
+      %li
+        DSL implemented in
+        %strong.pink-merengue Ruby
+      %li
+        Implements the concurrency primitives only
+      %li
+        Does not implement return/output unification
+
+%section
+  %h2 Implementation
+  %p
+    %code
+      code:
+      %a(href="https://github.com/prg-titech/magritte" style="text-decoration: none") https://github.com/prg-titech/magritte
+
+  %h3 Stage 2: Magritte Interpreter
+
+  .block
+    %ul
+      %li
+        Uses
+        %strong.pink-merengue Magritte-DSL
+        for concurrency
+      %li
+        Implements Magritte syntax and data structures
+      %li
+        Implements <strong class="dragon">return</strong>/<strong class="schrill">output</strong> unification
+      %li
+        Total implementation around
+        %strong.pink-merengue ~3360 SLOC
+
+  .block
+    %img{src: image_data('arch.png')}
+
+
+%section
+  %h2 UNIX integration
+
+  .block
+    %ul
+      %li
+        %strong.pink-merengue Incomplete
+      %li
+        Why? Needed to solve the#{' '}
+        %strong.schrill> input-stealing problem
+        \.
+
+        %p.sublist
+          \- UNIX commands assume exclusive read access
+        %p.sublist
+          \- This can make inputs disappear!
+      %li
+        Solution#{' '}
+        %strong.go-get-it> designed
+        , but#{' '}
+        %strong.pink-merengue> not implemented
+        \.
+
+        %p.sublist
+          \- Syntax-driven detection of when <code>stdin</code> is used
 
 
 %section
@@ -1002,58 +968,55 @@
 
   %h4 Need to validate:
   %ul
-    %li.fragment Magritte is appropriate <strong class="dune">for writing large programs</strong>
-    %p.fragment(style="text-align: left; text-indent: 2em")
-      %strong.pink-merengue problem:
-      Lots of concurrent code, which is difficult to debug
-    %p.fragment(style="text-align: left; text-indent: 2em")
-      %strong.sandy BUT:
-      Have enabled many programs not possible in bash
-    %li.fragment Magritte is appropriate <strong class="dune">for shell scripting</strong>
-    %p.fragment(style="text-align: left; text-indent: 2em")
-      %strong.pink-merengue problem:
-      UNIX integration is more difficult than we first expected
-    %li.fragment Magritte is appropriate <strong class="dune">as an interactive system shell</strong>
-    %p.fragment(style="text-align: left; text-indent: 2em")
-      %strong.pink-merengue problem:
-      Also needs UNIX integration
-    %p.fragment(style="text-align: left; text-indent: 2em")
-      %strong.sandy BUT:
-      Have preserved the shell composition strategy and repl interaction
-
-
-
--#%section
--#  %h2 Implementation Progress
+    %li.fragment
+      %p Magritte is appropriate <strong class="dune">for writing large programs</strong>
+      %p.sublist
+        %strong.pink-merengue problem:
+        Lots of concurrent code, which is difficult to debug
+      %p.sublist
+        %strong.sandy BUT:
+        Have enabled programs which use data structures, not possible in bash
+    %li.fragment
+      %p Magritte is appropriate <strong class="dune">for shell scripting</strong>
+      %p.sublist
+        %strong.pink-merengue problem:
+        UNIX integration is more difficult than we first expected
+    %li.fragment
+      Magritte is appropriate <strong class="dune">as an interactive system shell</strong>
+      %p.sublist
+        %strong.pink-merengue problem:
+        Also needs UNIX integration
+      %p.sublist
+        %strong.sandy BUT:
+        Have preserved the shell composition strategy and repl interaction
 
 %section
-  %h2 Implementation Progress
-  %p
-    %code
-      code:
-      %a(href="https://github.com/prg-titech/magritte" style="text-decoration: none") https://github.com/prg-titech/magritte
+  %h2 Future Directions
 
-  .block
-    %ul
-      %li
-        %strong.sandy [done]
-        Ruby Interpreter (&ldquo;magritte&rdquo;)
-      %li
-        %strong.sandy [done]
-        Feature complete!
-      -# %li
-      -#   %strong.pink-merengue [future-work]
-      -#   write some example programs, develop programming patterns and styles (Johannes)
-      %li
-        %strong.pink-merengue [TODO]
-        write the <strong class="chilly">UNIX integration layer</strong><br>
-        %small (with the help of Oleks Shturmov at the University of Olso)
-      %li
-        %strong.pink-merengue [TODO: in progress]
-        design a <strong class="chilly">Step Interpreter</strong><br>
-        to allow debugging of concurrent code
-      %li.fragment
-        %strong.go-get-it DEMO
+  %ul
+    %li.fragment
+      %strong.go-get-it> VM
+      \-based interpreter / concurrent debugger
+    %li.fragment
+      %strong.go-get-it OS
+      integration
+    %li.fragment
+      %strong.go-get-it Interactive
+      features
+
+      %p.sublist - automatic completion
+      %p.sublist - history integration
+      %p.sublist - output formatting / folding
+    %li.fragment
+      %strong.go-get-it Library
+      support
+    %li.fragment
+      %strong.go-get-it Rich
+      integrations
+
+      %p.sublist - produce values as JSON
+      %p.sublist - invoke lambda from an external program
+
 
 
 / %section

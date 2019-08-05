@@ -10,6 +10,12 @@
 //@import simple
 //@import sky
 
+.slides
+  border: 5px solid white !important
+
+.slide-number
+  font-size: 200% !important
+
 @import "highlight"
 .highlight
   padding: 10px
@@ -68,6 +74,8 @@ $dragon: #38C46D
   color: $backlit
 .schrill
   color: $schrill
+.dragon
+  color: $dragon
 
 h1.title
   font-weight: bold
@@ -84,10 +92,9 @@ h1.title
     font-style: italic
 
   h1, h2
-    letter-spacing: -0.02em
     font-family: "Libre Baskerville"
     line-height: 0.9em
-    letter-spacing: 0.02em
+    // letter-spacing: 0.02em
     text-transform: none
     text-shadow: none
     margin: 0.5em
@@ -103,7 +110,7 @@ h1.title
     margin-bottom: 0.3em
   section
     font-family: "Lato"
-    font-size: 1em
+    font-size: 120%
     line-height: 1.2em
 
     .tagline
@@ -133,13 +140,13 @@ h1.title
   .vs
     display: inline-block
     width: 45%
-    padding: 1em
+    padding: 30px
     vertical-align: top
 
   .vs3
     display: inline-block
-    width: 28%
-    padding: 1em
+    width: 26%
+    padding: 30px
 
   .replacement
     position: relative
@@ -177,6 +184,11 @@ h1.title
     &.box-special
       background-color: mix($krasna, $cool-as-ice, 50%)
 
+  .box h3, .box .block
+    //padding: 0
+    margin: 0.45em
+
+
   .box > ul
     margin-left: 0.5em
 
@@ -195,10 +207,19 @@ h1.title
       text-align: left
       margin: 0.3em
 
+      .sublist
+        text-align: left
+        text-indent: 2em
+
+  .bigger .sublist
+    font-size: 80%
+
   .bigger, h3
-    font-size: 130%
+    font-size: 120%
     line-height: 130%
-    margin: 1em
+
+  h3
+    margin: 1em 0
 
   .smaller, .cite
     font-size: 70%
@@ -231,7 +252,7 @@ body
   height: 100%
 
   .bubble
-    text-color: white
+    color: white
     padding: 0.3em
     border-radius: 0.3em
     background-color: darken($scarletred2, 20%)

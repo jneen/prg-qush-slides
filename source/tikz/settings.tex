@@ -1,0 +1,84 @@
+%%%% palette %%%%
+\makeatletter
+\def\RG#1#2{\csname RG@tok@#1\endcsname{#2}}%
+\newenvironment{RG*}{\ttfamily}{\relax}%
+\definecolor{RG@fgcolor}{HTML}{000707}
+\definecolor{RG@bgcolor}{HTML}{F3FFFF}
+\definecolor{RG@palette@magritte@dragon}{HTML}{006C6C}%
+\definecolor{RG@palette@magritte@black}{HTML}{000000}%
+\definecolor{RG@palette@magritte@forest}{HTML}{007500}%
+\definecolor{RG@palette@magritte@candy}{HTML}{FF0089}%
+\definecolor{RG@palette@magritte@wine}{HTML}{7C0000}%
+\definecolor{RG@palette@magritte@grape}{HTML}{4C48FE}%
+\definecolor{RG@palette@magritte@dark}{HTML}{000707}%
+\definecolor{RG@palette@magritte@cherry}{HTML}{F22700}%
+\definecolor{RG@palette@magritte@white}{HTML}{FFFFFF}%
+\definecolor{RG@palette@magritte@royal}{HTML}{19003A}%
+\definecolor{RG@palette@magritte@purple}{HTML}{840084}%
+\definecolor{RG@palette@magritte@chocolate}{HTML}{920241}%
+\definecolor{RG@palette@magritte@lavender}{HTML}{D8D9FF}%
+\definecolor{RG@palette@magritte@eggshell}{HTML}{F3FFFF}%
+\definecolor{RG@palette@magritte@yellow}{HTML}{FFFF3F}%
+\definecolor{RG@palette@magritte@lightgray}{HTML}{BBBBBB}%
+\definecolor{RG@palette@magritte@darkgray}{HTML}{999999}%
+
+\def\RGP#1{RG@palette@magritte@#1}
+\makeatother
+\usetikzlibrary{shadows,positioning,calc,quotes,fit,matrix,shapes,backgrounds}
+\pgfdeclarelayer{background}
+\pgfdeclarelayer{foreground}
+\pgfsetlayers{background,main,foreground}
+
+\def\leftframe#1{
+\node (lc) [frame, left=of #1, xshift=-2mm] {\frametext}
+  edge [->] (#1.west);
+}
+
+\def\frameadjust{0.1}
+\def\leftframes#1{
+\node (lt) [frame, above left=of #1] {\frametext}
+  edge [->, bend right] ($(#1.west |- #1.north) - (0,\frameadjust)$);
+\node (lb) [frame, below left=of #1] {\frametext}
+  edge [->, bend left] ($(#1.west |- #1.south) + (0,\frameadjust)$);
+\leftframe{#1}
+}
+
+\def\rightframe#1{
+\node (rc) [frame, right=of #1, xshift=2mm] {\frametext}
+  edge [<-] (#1.east);
+}
+
+\def\rightframes#1{
+\node (rt) [frame, above right=of #1] {\frametext}
+  edge [<-, bend left] ($(#1.east |- #1.north) - (0,\frameadjust)$);
+\node (rb) [frame, below right=of #1] {\frametext}
+  edge [<-, bend right] ($(#1.east |- #1.south) + (0,\frameadjust)$);
+\rightframe{#1}
+}
+
+\def\redxpath {
+      .. controls +(-0.65, 0.5) .. +(-1,1)
+      +(0, 1) .. controls +(-0.75, -0.55) .. +(-1, 0)
+}
+
+
+
+\tikzset{
+  node distance=2mm,
+  frame/.style={draw=white,
+                rectangle,
+                white,
+                fill=\RGP{chocolate},
+                rounded corners=0.8mm,
+                },
+  channel/.style={draw,
+                  rectangle,
+                  rounded corners,
+                  ultra thick,
+                  inner sep=7,
+                  \RGP{royal},
+                  fill=\RGP{lavender}},
+  redx/.style={\RGP{cherry},
+               ultra thick,
+               scale=0.2}
+}

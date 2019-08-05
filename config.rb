@@ -41,13 +41,38 @@ module ImageHelpers
   def image_data(fname)
     fname = "./source/images/#{fname}"
     raw = File.read(fname)
-    b64 = Base64.encode64(raw)
+    b64 = Base64.strict_encode64(raw)
     fname =~ /[.](.?)\z/
     ext = $1
     "data:image/#{ext};base64,#{b64}"
   end
 end
 helpers ImageHelpers
+
+
+module RawHelpers
+  def inline_raw(name, fname)
+    raw = File.read("./source/raw/#{fname}")
+    b64 = Base64.strict_encode64(raw)
+
+    content_tag :script, type: 'text/javascript' do
+      "RAW__#{name} = '#{b64}'".html_safe
+    end
+  end
+end
+helpers RawHelpers
+
+module TikzHelpers
+  def inline_tikz(name)
+    content_tag :script, type: 'text/tikz' do
+      settings = File.read('source/tikz/settings.tex')
+      source = File.read("source/tikz/#{name}.tex")
+
+      "#{settings}%\n%\n#{source}".html_safe
+    end
+  end
+end
+helpers TikzHelpers
 
 module AssetHelper
   ##
@@ -121,6 +146,8 @@ helpers AssetHelper
 set :css_dir, 'stylesheets'
 set :js_dir, 'javascripts'
 set :images_dir, 'images'
+set :raw_dir, 'raw'
+
 helpers HighlightingHelpers
 
 # Build-specific configuration

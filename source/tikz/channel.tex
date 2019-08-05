@@ -1,0 +1,52 @@
+\def\frametext{\textbf{\texttt{frame}}}
+\def\channeltext{\textbf{\texttt{Channel}}}
+\begin{tikzpicture}[
+  node distance=5mm,
+  action/.style = {
+    font=\ttfamily
+  },
+  actionarrow/.style = {
+    ->,
+    draw=\RGP{cherry},
+    very thick
+  }
+]
+
+\coordinate (center) at (0,0);
+\coordinate (left) at (-0.24\textwidth, -4);
+\coordinate (right) at (0.24\textwidth, -4);
+\node (noclose) at (center) [channel] {\channeltext};
+\node (closewrite) at (left) [channel] {\channeltext};
+\node (closeread) at (right) [channel] {\channeltext};
+
+\leftframes{noclose}
+\rightframes{noclose}
+
+\def\redx#1{\draw[redx] (#1.east |- #1.south) \redxpath}
+
+\redx{lb};
+\node[action, below=of lb] {remove\_writer} edge [actionarrow, <-] (lb);
+
+\redx{rb};
+\node[action, below=of rb] {remove\_reader} edge [actionarrow, <-] (rb);
+
+
+\rightframes{closewrite}
+\leftframe{closewrite}
+
+\def\closetext{{\color{\RGP{cherry}}\bfseries close!}}
+
+\redx{lc};
+\node (rwclose) [action, below=of lc, yshift=-4mm, xshift=6mm] {remove\_writer: \closetext};
+
+\draw [actionarrow] (lc) -- (lc |- rwclose.north);
+
+\leftframes{closeread}
+\rightframe{closeread}
+\node (rrclose) [action, below=of rc, yshift=-4mm, xshift=-6mm] {remove\_reader: \closetext};
+\draw [actionarrow] (rc) -- (rc |- rrclose.north);
+
+\redx{rc};
+
+
+\end{tikzpicture}

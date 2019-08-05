@@ -20,7 +20,7 @@ class Qsh < Rouge::RegexLexer
     rule /\d+(?!-)\b/, Num
     rule /[.\/\w-]+/, Name
 
-    rule /[(){}\[\]&|=;<>%+!]/, Punctuation
+    rule /[(){}:\[\]&|=;<>%+!]/, Punctuation
 
     rule /"/, Str::Double, :dq
   end
