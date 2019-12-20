@@ -92,7 +92,7 @@ GEM
       coderay (~> 1.0.5)
       method_source (~> 0.7.1)
       slop (>= 2.4.4, < 3)
-    rack (1.6.9)
+    rack (1.6.12)
     rack-test (0.8.3)
       rack (>= 1.0, < 3)
     rake (10.0.3)
